@@ -1,0 +1,14 @@
+{
+  "composerVendorName": "finbricks",
+  "composerProjectName": "info-api-php",
+  "artifactVersion": "0.0.1",
+  "invokerPackage": "Finbricks\\Api\\Info",
+  "modelPackage": "Model",
+  "apiPackage": "Api",
+  "variableNamingConvention": "camelCase",
+  "packagePath": "info-api-php",
+  "srcBasePath": "src",
+  "gitUserId": "finbricks",
+  "gitRepoId": "info-api-php",
+  "validateSpec": true
+}

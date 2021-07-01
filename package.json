@@ -1,0 +1,21 @@
+{
+  "name": "finbricks-php-sdk",
+  "version": "1.0.0",
+  "scripts": {
+    "downloadLatest": "ts-node download-latest-yml.ts",
+    "generate:auth": "openapi-generator-cli generate -c openapi/auth/settings.json  -i openapi/auth/auth-api.yml -g php -o generated/finbricks/auth-api-php",
+    "generate:eshop": "openapi-generator-cli generate -c openapi/eshop/settings.json  -i openapi/eshop/pgw-eshop-api.yml -g php -o generated/finbricks/eshop-api-php",
+    "generate:info": "openapi-generator-cli generate -c openapi/info/settings.json  -i openapi/info/info-api.yml -g php -o generated/finbricks/info-api-php",
+    "generate:platform": "openapi-generator-cli generate -c openapi/platform/settings.json  -i openapi/platform/pgw-platform-api.yml -g php -o generated/finbricks/platform-api-php",
+    "generate:recurring": "openapi-generator-cli generate -c openapi/recurring_payment/settings.json  -i openapi/recurring_payment/recurring-payment-api.yml -g php -o generated/finbricks/recurring-api-php",
+    "generate:status": "openapi-generator-cli generate -c openapi/status/settings.json  -i openapi/status/status-api.yml -g php -o generated/finbricks/status-api-php",
+    "generate": "npm run downloadLatest && npm run generate:auth && npm run generate:eshop &&npm run  generate:info &&npm run  generate:platform && npm run generate:recurring &&npm run  generate:status"
+  },
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.3.3",
+    "@types/node": "^15.12.5",
+    "typescript": "^4.3.4",
+    "ts-node": "^10.0.0",
+    "axios": "^0.21.1"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "composerVendorName": "finbricks",
+  "composerProjectName": "auth-sdk-php",
+  "invokerPackage": "Finbricks\\Api\\Auth",
+  "modelPackage": "Model",
+  "apiPackage": "Api",
+  "variableNamingConvention": "camelCase",
+  "packagePath": "auth-sdk-php",
+  "srcBasePath": "src",
+  "gitUserId": "finbricks",
+  "gitRepoId": "auth-api-php",
+  "validateSpec": true
+}

@@ -1,0 +1,166 @@
+openapi: 3.0.3
+info:
+  title: "Finbricks.com API - System status services"
+  description: "Get information regarding outages of banking APIs and instant payments processing on one place."
+  version: "1.0.1"
+
+servers:
+  - url: https://api.zaplaceno.cz/
+    description: Production server
+  - url: https://api.sandbox.zaplaceno.cz/
+    description: Sandbox server (uses live data)
+
+tags:
+  - name: status
+    description: Finbricks.com service - System status
+
+paths:
+
+  /status/paymentProviders:
+    get:
+      tags:
+        - status
+      summary: "List of payment providers with their statuses."
+      operationId: statusPaymentProviders
+
+      parameters:
+        - $ref: '#/components/parameters/merchantId'
+        - $ref: '#/components/parameters/paymentProvider'
+        - $ref: '#/components/parameters/signature'
+      responses:
+        200:
+          description: "Ok - returns list of payment providers"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentProviders'
+        default:
+          description: Some error occured - see chapter [Error handling](#section/Error-handling) for possible values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  parameters:
+    merchantId:
+      in: query
+      name: merchantId
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: "c3073b9d-edd0-49f2-a28d-b7ded8ff9a8b"
+      description: "Unique merchant identifier from merchant registration process"
+    paymentProvider:
+      in: query
+      name: paymentProvider
+      required: false
+      example: "KB"
+      schema:
+        type: string
+        maxLength: 50
+      description: "Provider code. Example values KB, AIRBANK, MONETA, CSAS, CSOB, RAIFFEISEN, EQUA, FIO..."
+    signature:
+      in: header
+      name: signature
+      required: true
+      schema:
+        type: string
+        example: "d7fILo5uES9aX/uHgz/N4qZq2MN5lKnxv6HzQx7gVaXcMSRwzcc+k8FXWcyA3FzC5Ps0kxmiwSkR8Rco6vFsyfo3nubtuqPByfhV9kZ5gG4o3JUZAchZL99M6zX4uVBVMs+DWuUX80jlHVOk6DLsOYMoMVEoTAoPUQL22GsPelMFG9ZyujbNAY23jKJxi/Y89s2/n5+OsIG0+LlDD1fpxbROzPQcXj2dZXGI7CqTEAEQvnS0wCJvpJPdxcyKxF+F7wpmlzJLD3kMA8w6ffw4O8DX00KJOJv2ROLd3u1whtLqO7unbHYkNVk05q6gT4nl1TMkKtZP0I/dCuGrWzf0QlBTLExK2JTYpj3mvKuWBJWcJDb61sAn3r+SE7zltmY9cqgnX9UId8Ax97ToqwGl6GUFv47LN+gOp88V7H4HIGu8C1+VF0OxRgIerSrKKHg0GgoxBWkT8XJr3ULdegE4AtQqQIpZZZPE3ios5+3LU/HjlNQnpoMwgcPPZE4UX5vN2uRIYkugcTn7CF13OTX9Qdqfy21gvO9Jbu+pydlyvod6HyvDiEv4W1v8Nex1yrS7rVW8vkufb8K/aTt9LxZxb+4ZM4c6Zd0n+FwkZSma25mNTNOAwJ321ev82PTLuw8mGqM8oPZKSR+sU0WVrzOQvpdBKwjgryKLoS8AoiPSoxY="
+      description: "Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request)."
+
+  schemas:
+
+    PaymentProviders:
+      type: object
+      required:
+        - redirectUrl
+      properties:
+        banks:
+          type: array
+          items:
+            type: object
+            description: "Information about the bank and its status."
+            properties:
+              identification:
+                type: object
+                properties:
+                  name:
+                    type: "string"
+                    description: "Name of the provider in Czech."
+                    example: "Komerční banka"
+                  paymentProvider:
+                    type: "string"
+                    description: "Provider code in Finbricks."
+                    example: "KB"
+                  bankCode:
+                    type: string
+                    description: "Bank code."
+                    example: "0100"
+                  countryCode:
+                    type: string
+                    description: "CountryCode, ISO 3166 (2 alphanumeric characters code version)."
+                    example: "CZ"
+                  bic:
+                    type: string
+                    description: "BIC - Business Identifier Code of the payer bank. ISO 9362."
+                    example: "KOMBCZPP"
+                  logoUrl:
+                    type: "string"
+                    description: "Payment provider logu URL. Logos are usualy in SVG format."
+                    example: "https://example.com/bank/logo.svg"
+              status:
+                type: object
+                properties:
+                  enabledForMerchant:
+                    type: boolean
+                    description: "An indicator of whether the provider is enabled for the Merchant."
+                    example: true
+                  currentStatus:
+                    type: string
+                    enum: [ online, offline-planned, offline-error ]
+                    description: |-
+
+                      * __online__ - APIs of payment provider are online.
+                      * __offline-planned__ - APIs of payment provider are offline due to a planned outage.
+                      * __offline-error__ - (comming soon!) APIs of payment provider are offline due to unknown reasons.
+
+                    example: "online"
+                  plannedOutages:
+                    type: array
+                    description: "Planned outages stated by the payment provider typically days before the outage."
+                    items:
+                      type: object
+                      properties:
+                        from:
+                          type: string
+                          format: date-time
+                        to:
+                          type: string
+                          format: date-time
+                        description:
+                          type: string
+                          example: "Planned outage due to system upgrade"
+
+    Error:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: "Date time of the response."
+          example: "2021-04-19T10:47:04.074795+02:00"
+        code:
+          type: string
+          description: "Error code. For list of used codes see the chapter [Error codes](#section/Error-handling/Error-codes)."
+          example: 213
+        message:
+          type: string
+          description: "Error message."
+          example: "Invalid input merchantId without value. Problem: merchantId is required parameter"
+        xrequestId:
+          type: string
+          format: uuid
+          description: "Identifier that can be used to report the issue."
+          example: "508e9f32-c7e1-4740-924a-2d5833b5eff4"

@@ -1,0 +1,14 @@
+{
+  "composerVendorName": "finbricks",
+  "composerProjectName": "eshop-api-php",
+  "artifactVersion": "0.0.1",
+  "invokerPackage": "Finbricks\\Api\\Eshop",
+  "modelPackage": "Model",
+  "apiPackage": "Api",
+  "variableNamingConvention": "camelCase",
+  "packagePath": "eshop-api-php",
+  "srcBasePath": "src",
+  "gitUserId": "finbricks",
+  "gitRepoId": "eshop-api-php",
+  "validateSpec": true
+}

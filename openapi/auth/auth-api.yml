@@ -1,0 +1,320 @@
+openapi: 3.0.3
+
+info:
+  title: "Finbricks.com API - User authentication services"
+  description: "Finbricks.com API - User authentication services"
+  version: "1.2.3"
+
+servers:
+  - url: https://api.zaplaceno.cz/
+    description: Production server
+  - url: https://api.sandbox.zaplaceno.cz/
+    description: Sandbox server (uses live data)
+
+tags:
+  - name: Auth
+    description: User authentication services
+
+paths:
+  /auth/authenticate:
+    post:
+      description: |-
+        To access the Account Information Services or to pre-authenticate the user for Payment services, the user must be authenticated in selected bank.
+
+        First, the merchant calls the __/auth/authenticate__ service.
+
+        If the user is identified by the merchant using `clientId`, the payment gateway verifies whether a valid token to the bank exists for the given user.
+
+        If valid authentication exists, the payment gateway returns `auth_approved`.
+        If valid authentication does not exist, the payment gateway returns `need_auth` and a `redirectUrl` to which the user must be redirected in order to authenticate in the bank.
+
+        There is a possibility to call auth services without `clientId`, in which case a time-limited `operationId` is generated (see chapter [Identifiers](#section/Introduction/Identifiers)).
+
+        This `operationId` can be then used in all Account Information Services in `operationId` parameter as a substitution for `clientId`. Be aware of time-limits of such `operationId`.
+        When calling Account Information Services, only one of the above mentioned identifiers should be used, the `clientId` or the `operationId` parameter.
+
+        With the given `clientId` or `operationId` it is possible to call the Account Information Services (AISP scope) or use the `clientId` within payment process (/transaction/platform/init, PISP scope) so that the authentication step will be skipped. The user will have to authorize just the payment.
+
+        Each authentication is bound via `merchantId`, `clientId` (if used), `provider`, `scope` (if not used, AISP_PISP is set as default). If there is authentication for the above combination in the payment gateway and the merchant changes one of the parameters (e.g. scope), the result is evaluated as `need_auth` and the user must be authenticated again.
+
+      operationId: authAuthenticatePost
+      tags:
+        - Auth
+      parameters:
+        - $ref: '#/components/parameters/signatureParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthenticateRequest"
+      summary: "Authenticate user"
+      responses:
+        200:
+          description: "User is authenticated"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticateResponse'
+        default:
+          description: Some error occured - see chapter [Error handling](#section/Error-handling) for possible values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      callbacks:
+        paymentFinished:
+          '{$request.query.callbackUrl}/':
+            get:
+              parameters:
+                - $ref: '#/components/parameters/clientIdCallbackParam'
+                - $ref: '#/components/parameters/operationIdCallbackParam'
+                - $ref: '#/components/parameters/code'
+                - $ref: '#/components/parameters/error'
+              responses:
+                '200':
+                  description: "OK"
+
+  /auth/token:
+    get:
+      operationId: getRefreshTokens
+      tags:
+        - Auth
+      summary: "Get expiration details of user's authentication"
+      description: |-
+        It is possible to call the __/auth/token__ service to obtain information about the existence of valid user authentication in the bank. The service returns a list of user authentications that is bind to its `clientId`. The service returns multiple records if there are authentications for different providers (banks) or scopes within one `clientId`.
+
+        Please note that the return attribute `validTo` is only indicative, because the client can, for example, invalidate all existing access rights from the environment of his internet banking. On the other hand, the existence of a token at the time of the service call is verified at the bank.
+
+      parameters:
+        - $ref: '#/components/parameters/merchantIdParam'
+        - $ref: '#/components/parameters/signatureParam'
+        - $ref: '#/components/parameters/clientIdParam'
+        - $ref: '#/components/parameters/providerParam'
+      responses:
+        200:
+          description: "Ok - User's authentication details returned"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RefreshTokenDto'
+        default:
+          description: Some error occured - see chapter [Error handling](#section/Error-handling) for possible values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/revoke:
+    delete:
+      summary: "Delete all existing user authentications"
+      operationId: deleteRefreshToken
+      description: "The service deletes all existing user authentications that are identified within the merchnat via `clientId`."
+      tags:
+        - Auth
+      parameters:
+        - $ref: '#/components/parameters/merchantIdParam'
+        - $ref: '#/components/parameters/signatureParam'
+        - $ref: '#/components/parameters/clientIdParam'
+        - $ref: '#/components/parameters/providerParam'
+      responses:
+        204:
+          description: "Ok - Successfully deleted"
+        default:
+          description: Some error occured - see chapter [Error handling](#section/Error-handling) for possible values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/revoke/all:
+    delete:
+      summary: "Delete all users' authentications within merchant"
+      operationId: deleteAllRefreshTokens
+      description: "The service deletes all existing users' authentications within the merchant."
+      tags:
+        - Auth
+      parameters:
+        - $ref: '#/components/parameters/merchantIdParam'
+        - $ref: '#/components/parameters/signatureParam'
+      responses:
+        204:
+          description: "Ok - Successfully deleted"
+        default:
+          description: Some error occured - see chapter [Error handling](#section/Error-handling) for possible values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  parameters:
+    code:
+      in: query
+      name: code
+      schema:
+        type: number
+        example: 101
+      description: "Error code"
+    error:
+      in: query
+      name: error
+      schema:
+        type: string
+        example: "[InvalidAccountCurrency] – invalid currency of the required account."
+      description: "Error description"
+    signatureParam:
+      in: header
+      name: signature
+      required: true
+      schema:
+        type: string
+      description: "Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request)."
+    merchantIdParam:
+      in: query
+      name: merchantId
+      required: true
+      example: "0d2c62cf-e4f2-41a7-af7e-c7c50e5b9086"
+      schema:
+        type: string
+        format: uuid
+      description: "Unique merchant identifier assigned by the payment gateway"
+    clientIdParam:
+      in: query
+      name: clientId
+      required: true
+      example: "0000001"
+      schema:
+        type: string
+        maxLength: 100
+      description: "Id identifying the end user at the merchant."
+    clientIdCallbackParam:
+      in: query
+      name: clientId
+      example: "0000001"
+      schema:
+        type: string
+        maxLength: 100
+      description: "Id identifying the end user at the merchant. `clientId` or `operationId` is required."
+    operationIdCallbackParam:
+      in: query
+      name: operationId
+      schema:
+        type: string
+        format: uuid
+      description: "One-time end-user identifier assigned by Finbricks.com. `clientId` or `operationId` is required."
+    providerParam:
+      in: query
+      name: provider
+      required: false
+      example: "KB"
+      schema:
+        type: string
+        maxLength: 50
+      description: "Provider code. Example values KB, AIRBANK, MONETA, CSAS, CSOB, RAIFFEISEN, EQUA, FIO."
+
+  schemas:
+    AuthenticateResponse:
+      type: object
+      required:
+        - authStatus
+      properties:
+        authStatus:
+          type: string
+          description: |-
+            Authentication status
+
+            * __auth_approved__ - The client has already been authenticated before and the merchnat can call Account information APIs.
+            * __need_auth__ - The client has not been authenticated before OR the authentication has expired. The merchant should redirect the client to the `redirectUrl`.
+
+          enum: [auth_approved, need_auth]
+        redirectUrl:
+          type: string
+          description: |-
+            URL to bank's auth gateway
+
+            The `redirectUrl` will be returned in case the client has not been authenticated before or the authentication expired.
+            The merchant should redirect the client to this `redirectUrl`.
+
+        operationId:
+          type: string
+          format: uuid
+          description: "End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Introduction/Identifiers)."
+
+    AuthenticateRequest:
+      type: object
+      required:
+        - merchantId
+        - provider
+      properties:
+        merchantId:
+          type: string
+          format: uuid
+          description: "Unique merchant identifier assigned by the payment gateway."
+        clientId:
+          type: string
+          description: "Id identifying the end user at the merchant."
+        provider:
+          type: string
+          example:   "KB"
+          description: "Provider code. Example values KB, AIRBANK, MONETA, CSAS, CSOB, RAIFFEISEN, EQUA, FIO."
+        scope:
+          type: string
+          example: "AISP"
+          enum: ["AISP","PISP","AISP_PISP"]
+          description: "Scope. If the value is not filled in, the payment gateway will use the default value `AISP_PISP`."
+        callbackUrl:
+          type: string
+          description: "The URL address of the merchant to which the payment gateway will callback after the user authentication is completed. The merchant will receive `clientId` as a query param."
+    RefreshTokenDto:
+      description: "User authentication details."
+      type: object
+      properties:
+        clientId:
+          example: "0000001"
+          type: string
+          description: "Id identifying the end-user at the merchant."
+          maxLength: 100
+        provider:
+          example: "KB"
+          type: string
+          description: "Provider code. Example values KB, AIRBANK, MONETA, CSAS, CSOB, RAIFFEISEN, EQUA, FIO."
+        scope:
+          example: "AISP"
+          type: string
+          description: "Scope. If the value is not filled in, the payment gateway will use the default value `AISP_PISP`."
+        validFrom:
+          type: string
+          format: date-time
+          description: "Date and time when token has been created."
+        validTo:
+          type: string
+          format: date-time
+          description: |-
+            Date and time of user authentication expiration.
+
+            Please note that the value is only indicative, because the client can, for example, invalidate all existing access rights from the environment of his internet banking. On the other hand, the existence of a token at the time of the service call is verified at the bank.
+
+    Error:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: "Date time of the response."
+          example: "2021-04-19T10:47:04.074795+02:00"
+        code:
+          type: string
+          description: "Error code. For list of used codes see the chapter [Error codes](#section/Error-handling/Error-codes)."
+          example: 213
+        message:
+          type: string
+          description: "Error message."
+          example: "Invalid input merchantId without value. Problem: merchantId is required parameter"
+        xrequestId:
+          type: string
+          format: uuid
+          description: "Identifier that can be used to report the issue."
+          example: "508e9f32-c7e1-4740-924a-2d5833b5eff4"

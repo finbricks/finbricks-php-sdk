@@ -1,0 +1,14 @@
+{
+  "composerVendorName": "finbricks",
+  "composerProjectName": "recurring-api-php",
+  "artifactVersion": "0.0.1",
+  "invokerPackage": "Finbricks\\Api\\Recurring",
+  "modelPackage": "Model",
+  "apiPackage": "Api",
+  "variableNamingConvention": "camelCase",
+  "packagePath": "auth-api-php",
+  "srcBasePath": "src",
+  "gitUserId": "finbricks",
+  "gitRepoId": "recurring-api-php",
+  "validateSpec": true
+}

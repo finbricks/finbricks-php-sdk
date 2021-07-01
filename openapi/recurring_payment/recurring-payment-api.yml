@@ -1,0 +1,701 @@
+openapi: "3.0.3"
+
+info:
+  title: "Finbricks.com API - Rcurring payments"
+  description: "Finbricks.com API - Recurring payments"
+  version: "1.4.1"
+
+servers:
+  - url: https://api.zaplaceno.cz/
+    description: Production server
+  - url: https://api.sandbox.zaplaceno.cz/
+    description: Sandbox server (uses live data)
+
+tags:
+  - name: RecurringPayments
+    description: Recurring payments initiation and information
+
+paths:
+  /recurringPayments/init:
+    post:
+      tags:
+        - RecurringPayments
+      summary: "Recurring payment inicialization"
+      operationId: recurringPaymentsInit
+      parameters:
+        - $ref: '#/components/parameters/signature'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecurringPaymentInit"
+      responses:
+        201:
+          description: "Created - initialization of transaction was succesfull"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InitResult'
+        default:
+          description: Some error occured - see chapter [Error handling](#section/Error-handling) for possible values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /recurringPayments/status:
+    get:
+      tags:
+        - RecurringPayments
+      summary: "Transaction status"
+      description: |-
+        The endpoint is used to verify the status of the transaction. The merchant should call this endpoint after receiving a callback containing merchantTransactionId, thus informing you that the transaction was processed either successfully or with an error.
+
+        The recommended call frequency for this service is as follows:
+
+        * Immediately after receiving the callback for the initiated payment, when the end-user is present at the customer's front end.
+        * Possibly again in a matter of seconds, if the end-user is present.
+
+      operationId: recurringPaymentsStatus
+      parameters:
+        - $ref: '#/components/parameters/merchantId'
+        - $ref: '#/components/parameters/merchantTransactionId'
+        - $ref: '#/components/parameters/signature'
+      responses:
+        200:
+          description: "Ok - return status of recurring payment"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringPaymentStatusResult'
+        default:
+          description: Some error occured - see chapter [Error handling](#section/Error-handling) for possible values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /recurringPayments/list:
+    get:
+      tags:
+        - RecurringPayments
+      summary: "List of user's recurring payments"
+      operationId: recurringPaymentsList
+      parameters:
+        - $ref: '#/components/parameters/merchantId'
+        - $ref: '#/components/parameters/clientId'
+        - $ref: '#/components/parameters/operationId'
+        - $ref: '#/components/parameters/paymentProvider'
+        - $ref: '#/components/parameters/signature'
+
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/page'
+      responses:
+        200:
+          description: "Ok - returns list of user's recurring payments"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringPaymentsList'
+        default:
+          description: Some error occured - see chapter [Error handling](#section/Error-handling) for possible values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /recurringPayments/detail:
+    get:
+      tags:
+        - RecurringPayments
+      summary: "Detail of user's recurring payment"
+      operationId: recurringPaymentDetail
+      parameters:
+        - $ref: '#/components/parameters/merchantId'
+        - $ref: '#/components/parameters/clientId'
+        - $ref: '#/components/parameters/operationId'
+        - $ref: '#/components/parameters/paymentProvider'
+        - $ref: '#/components/parameters/transactionIdentification'
+        - $ref: '#/components/parameters/signature'
+      responses:
+        200:
+          description: "Ok - returns detail of user's recurring payment"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringPaymentDetail'
+        default:
+          description: Some error occured - see chapter [Error handling](#section/Error-handling) for possible values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /recurringPayments/listWithDetail:
+    get:
+      tags:
+        - RecurringPayments
+      summary: "List of user's recurring payments with details"
+      operationId: recurringPaymentsListWithDetail
+      parameters:
+        - $ref: '#/components/parameters/merchantId'
+        - $ref: '#/components/parameters/clientId'
+        - $ref: '#/components/parameters/operationId'
+        - $ref: '#/components/parameters/paymentProvider'
+        - $ref: '#/components/parameters/signature'
+
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/page'
+      responses:
+        200:
+          description: "Ok - returns list of user's recurring payments with details"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecurringPaymentsListWithDetail'
+        default:
+          description: Some error occured - see chapter [Error handling](#section/Error-handling) for possible values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  parameters:
+    clientId:
+      in: query
+      name: clientId
+      required: false
+      schema:
+        type: string
+      description: "Identification of the client (end-user)."
+
+    merchantId:
+      in: query
+      name: merchantId
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: "c3073b9d-edd0-49f2-a28d-b7ded8ff9a8b"
+      description: "Unique merchant identifier from merchant registration process"
+
+    merchantTransactionId:
+      in: query
+      name: merchantTransactionId
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: "e284d244-f2ce-4ee6-9ae3-27869cbd8d0f"
+      description: "Unique transaction identifier generated by merchant"
+
+    page:
+      in: query
+      name: page
+      required: false
+      schema:
+        type: integer
+      example: 0
+      description: "Paging. Required page. Default: 0"
+
+    paymentProvider:
+      in: query
+      name: paymentProvider
+      required: true
+      example: "KB"
+      schema:
+        type: string
+        maxLength: 50
+      description: "Provider code. Example values KB, AIRBANK, MONETA, CSAS, CSOB, RAIFFEISEN, EQUA, FIO..."
+
+    operationId:
+      in: query
+      name: operationId
+      required: false
+      schema:
+        type: string
+        format: uuid
+      description: "End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Introduction/Identifiers)."
+
+    signature:
+      in: header
+      name: signature
+      required: true
+      schema:
+        type: string
+        example: "d7fILo5uES9aX/uHgz/N4qZq2MN5lKnxv6HzQx7gVaXcMSRwzcc+k8FXWcyA3FzC5Ps0kxmiwSkR8Rco6vFsyfo3nubtuqPByfhV9kZ5gG4o3JUZAchZL99M6zX4uVBVMs+DWuUX80jlHVOk6DLsOYMoMVEoTAoPUQL22GsPelMFG9ZyujbNAY23jKJxi/Y89s2/n5+OsIG0+LlDD1fpxbROzPQcXj2dZXGI7CqTEAEQvnS0wCJvpJPdxcyKxF+F7wpmlzJLD3kMA8w6ffw4O8DX00KJOJv2ROLd3u1whtLqO7unbHYkNVk05q6gT4nl1TMkKtZP0I/dCuGrWzf0QlBTLExK2JTYpj3mvKuWBJWcJDb61sAn3r+SE7zltmY9cqgnX9UId8Ax97ToqwGl6GUFv47LN+gOp88V7H4HIGu8C1+VF0OxRgIerSrKKHg0GgoxBWkT8XJr3ULdegE4AtQqQIpZZZPE3ios5+3LU/HjlNQnpoMwgcPPZE4UX5vN2uRIYkugcTn7CF13OTX9Qdqfy21gvO9Jbu+pydlyvod6HyvDiEv4W1v8Nex1yrS7rVW8vkufb8K/aTt9LxZxb+4ZM4c6Zd0n+FwkZSma25mNTNOAwJ321ev82PTLuw8mGqM8oPZKSR+sU0WVrzOQvpdBKwjgryKLoS8AoiPSoxY="
+      description: "Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request)."
+
+    size:
+      in: query
+      name: size
+      required: false
+      schema:
+        type: integer
+        maximum: 50
+      example: 10
+      description: "Paging. Number of entries per page. There is a limit to the number of records that helps prevent a bank request from timeouting."
+
+    transactionIdentification:
+      in: query
+      name: transactionIdentification
+      required: true
+      schema:
+        type: string
+      example: "3G3148492"
+      description: "Identifier of recurring payment instruction."
+
+  schemas:
+    constantSymbol:
+      type: string
+      description: "Constant symbol. Some banks may trim '0's at the beginning."
+      maxLength: 10
+      example: "0308"
+    creditorAccountIban:
+      type: string
+      description: "Creditor's account number in IBAN format"
+      example: "CZ5508000000001234567899"
+    currency:
+      type: string
+      description: "CurrencyCode, ISO 4217."
+      example: "CZK"
+    debtorAccountIban:
+      type: string
+      description: "Debtor's account number in IBAN format"
+      example: "CZ5508000000001234567899"
+    description:
+      type: string
+      maxLength: 140
+      description: "Recurring payment description - message for the payee"
+      example: "Trvala platba za energie"
+    paymentType:
+      type: string
+      description: "Type of entered payment."
+      example: "DMCT"
+    specificSymbol:
+      type: string
+      description: "Specific symbol. Some banks may trim '0's at the beginning."
+      maxLength: 10
+      example: "0123456789"
+    transactionIdentification:
+      type: string
+      description: "Identifier of recurring payment order."
+      example: "33148492"
+    value:
+      type: number
+      description: "Value/amount."
+      example: 372.88
+    variableSymbol:
+      type: string
+      description: "Variable symbol. Some banks may trim '0's at the beginning."
+      maxLength: 10
+      example: "0123456789"
+
+    pageNumber:
+      type: number
+      description: "Number of current page"
+      example: 0
+    pageCount:
+      type: number
+      description: "Total number of query pages"
+      example: 2
+    pageSize:
+      type: number
+      description: "Number of entries per page. This parameter can match the required size value from the query, except for the cases when it is the last page, or when the requested page range exceeded the maximum limit defined for the particular API resource."
+      example: 10
+
+    amount:
+      type: object
+      description: "Payment amount and the currency."
+      properties:
+        value:
+          $ref: '#/components/schemas/value'
+        currency:
+          $ref: '#/components/schemas/currency'
+
+    Execution:
+      type: object
+      description: "Payment amount and the currency."
+      properties:
+        interval:
+          type: string
+          description: |-
+            Execution interval defines how often order is executed.
+
+            Possible values:
+            * __DAILY__ Once per day
+            * __WEEKLY__ Once a week
+            * __MONTHLY__ Once a month
+            * __BI_MONTHLY__ Once every two months
+            * __QUARTERLY__ Is done once every quarter of a year
+            * __HALFYEARLY__ Will be done once every six months
+            * __YEARLY__ Is done once a year
+            * __IRREGULAR__ It is performed irregularly
+
+          example: "MONTHLY"
+        intervalDue:
+          type: integer
+          description: |-
+            Value represents order number of the day within particular period when the standing order will be reqularly executed.
+
+            Possible values: 1-7 (for WEEKLY interval), 1-28 for MONTHLY, 1-2 for BI_MONTHLY, 1-3 for QUARTERLY, 1-6 for HALFYEARLY, 1-12 for YEARLY.
+
+            Possible values:
+            * __1-7__ for WEEKLY interval
+            * __1-28__ for MONTHLY
+            * __1-2__ for BI_MONTHLY
+            * __1-3__ for QUARTERLY
+            * __1-6__ for HALFYEARLY
+            * __1-12__ for YEARLY
+
+          example: 7
+        mode:
+          type: string
+          description: |-
+            The execution mode defines when or how recurring payment will be cancelled, processed the last time.
+
+            Possible values:
+            * __UNTIL_DATE__ recurring payment is valid until specific date
+            * __UNTIL_CANCELLATION__ recurring payment is valid forever and must be cancelled by client
+            * __AFTER_MAX_ITERATION_EXCEEDED__ certain count of executions is specified
+            * __MAX_AMOUNT_EXCEEDED__ maximum amount which can be transferred for this order is specified, if next iteration would exceed this amount it is not executed
+
+          example: "UNTIL_DATE"
+        modeDue:
+          type: string
+          description: |-
+            The execution due mode defines how the date when order should be executed is specified.
+
+            Possible values:
+            * __DUE_DAY_OF_MONTH__ specific number of day in the month is defined
+            * __DUE_OR_BEFORE_DAY_OF_MONTH__ is defined as a specific day of the month or the previous day if the day falls on a non-banking day
+            * __DUE_OR_NEXT_DAY_OF_MONTH__ is defined as a specific day of the month or the next day if the day falls on a non-banking day
+            * __DUE_LAST_DAY_OF_MONTH__ order is executed on last day of particular month
+
+          example: "DUE_DAY_OF_MONTH"
+
+    InitResult:
+      type: object
+      required:
+        - redirectUrl
+      properties:
+        redirectUrl:
+          type: string
+          description: "The client should redirect the end user to this URL."
+
+    RecurringPaymentInit:
+      description: "Recurring payment init"
+      type: object
+      required:
+        - merchantId
+        - merchantTransactionId
+        - amount
+        - debtorAccountIban
+        - creditorAccountIban
+        - requestedExecutionDate
+        - interval
+        - mode
+        - modeDue
+      properties:
+        merchantId:
+          type: string
+          format: uuid
+          description: "Unique merchant identifier from merchant registration process"
+          example: "c3073b9d-edd0-49f2-a28d-b7ded8ff9a8b"
+        merchantTransactionId:
+          type: string
+          format: uuid
+          description: "Unique transaction identifier generated by merchant"
+          example: "e284d244-f2ce-4ee6-9ae3-27869cbd8d0f"
+        amount:
+          type: number
+          description: "Recurring payment amount"
+          example: 372.88
+        debtorAccountIban:
+          type: string
+          description: "Debtor's account number in IBAN format"
+          example: "CZ5508000000001234567899"
+        creditorAccountIban:
+          type: string
+          description: "Creditor's account number in IBAN format"
+          example: "CZ5508000000001234567899"
+        description:
+          type: string
+          maxLength: 140
+          description: "Payment description - message for the payee"
+          example: "Platba za energie"
+        variableSymbol:
+          type: string
+          description: "Variable symbol. Some banks may trim '0's at the beginning."
+          maxLength: 10
+          example: "0123456789"
+        specificSymbol:
+          type: string
+          description: "Specific symbol. Some banks may trim '0's at the beginning."
+          maxLength: 10
+          example: "0123456789"
+        constantSymbol:
+          type: string
+          description: "Constant symbol. Some banks may trim '0's at the beginning."
+          maxLength: 10
+          example: "0308"
+        callbackUrl:
+          type: string
+          description: "URL that is called after the process of recurring payment is done."
+          example: "https://example.com/callback"
+        clientId:
+          type: string
+          maxLength: 100
+          description: |-
+            End-user identifier assigned by the customer. Use [/auth/authenticate](#operation/authAuthenticatePost) to let the user authenticate in the bank.
+
+            `clientId` or `operationId` is required. For more information, see chapter [Identifiers](#section/Introduction/Identifiers).
+
+          example: "someClientId"
+        operationId:
+          type: string
+          format: uuid
+          description: |-
+            End-user identifier assigned by Finbricks.com. Use [/auth/authenticate](#operation/authAuthenticatePost) to let the user authenticate in the bank.
+
+            `clientId` or `operationId` is required. For more information, see chapter [Identifiers](#section/Introduction/Identifiers)."
+
+          example: "c13dcb37-986d-41d9-889d-465284a4fde7"
+        requestedExecutionDate:
+          type: string
+          format: date
+          description: |-
+            Requested date of recurring payment. ISODate i.e. YYYY-MM-DD.
+
+            where: YYYY = four-digit year MM = two-digit month (01=January, etc.) DD = two-digit day of month (01 through 31).
+        interval:
+          type: string
+          description: |-
+            Execution interval defines how often order is executed.
+
+            Possible values:
+            * __DAILY__ Once per day
+            * __WEEKLY__ Once a week
+            * __MONTHLY__ Once a month
+            * __BI_MONTHLY__ Once every two months
+            * __QUARTERLY__ Is done once every quarter of a year
+            * __HALFYEARLY__ Will be done once every six months
+            * __YEARLY__ Is done once a year
+            * __IRREGULAR__ It is performed irregularly
+
+          example: "MONTHLY"
+        intervalDue:
+          type: integer
+          description: |-
+            Value represents order number of the day within particular period when the standing order will be reqularly executed.
+
+            Possible values: 1-7 (for WEEKLY interval), 1-28 for MONTHLY, 1-2 for BI_MONTHLY, 1-3 for QUARTERLY, 1-6 for HALFYEARLY, 1-12 for YEARLY.
+
+            Possible values:
+            * __1-7__ for WEEKLY interval
+            * __1-28__ for MONTHLY
+            * __1-2__ for BI_MONTHLY
+            * __1-3__ for QUARTERLY
+            * __1-6__ for HALFYEARLY
+            * __1-12__ for YEARLY
+
+          example: 7
+        mode:
+          type: string
+          description: |-
+            The execution mode defines when or how recurring payment will be cancelled, processed the last time.
+
+            Possible values:
+            * __UNTIL_DATE__ recurring payment is valid until specific date
+            * __UNTIL_CANCELLATION__ recurring payment is valid forever and must be cancelled by client
+            * __AFTER_MAX_ITERATION_EXCEEDED__ certain count of executions is specified
+            * __MAX_AMOUNT_EXCEEDED__ maximum amount which can be transferred for this order is specified, if next iteration would exceed this amount it is not executed
+
+          example: "UNTIL_DATE"
+        modeDue:
+          type: string
+          description: |-
+            The execution due mode defines how the date when order should be executed is specified.
+
+            Possible values:
+            * __DUE_DAY_OF_MONTH__ specific number of day in the month is defined
+            * __DUE_OR_BEFORE_DAY_OF_MONTH__ is defined as a specific day of the month or the previous day if the day falls on a non-banking day
+            * __DUE_OR_NEXT_DAY_OF_MONTH__ is defined as a specific day of the month or the next day if the day falls on a non-banking day
+            * __DUE_LAST_DAY_OF_MONTH__ order is executed on last day of particular month
+
+          example: "DUE_DAY_OF_MONTH"
+        lastExecutionDate:
+          type: string
+          format: date
+          description: |-
+            Date when the last order will be processed. Only applicable in combination with `mode` `UNTIL_DATE` or `UNTIL_CANCELLATION`.
+
+            Null value responds to ending by the user. ISODate i.e. YYYY-MM-DD.
+
+            where: YYYY = four-digit year MM = two-digit month (01=January, etc.) DD = two-digit day of month (01 through 31).
+
+        maxIterations:
+          type: integer
+          description: "Maximum number of iterations - processing of the standing order. Only applicable in combination with `mode` `AFTER_MAX_ITERATION_EXCEEDED`."
+          example: 2
+        initiatorName:
+          type: string
+          maxLength: 50
+          description: "Name of the initiator of the payment. The initiator is a party using your services."
+          example: "Podnikatel XY"
+
+    RecurringPaymentsListWithDetail:
+      properties:
+        pageNumber:
+          $ref: '#/components/schemas/pageNumber'
+        pageCount:
+          $ref: '#/components/schemas/pageCount'
+        pageSize:
+          $ref: '#/components/schemas/pageSize'
+
+        recurringPayment:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecurringPaymentDetail'
+
+    RecurringPaymentDetail:
+      properties:
+        transactionIdentification:
+          $ref: '#/components/schemas/transactionIdentification'
+        paymentType:
+          $ref: '#/components/schemas/paymentType'
+        amount:
+          $ref: '#/components/schemas/amount'
+        parties:
+          type: object
+          description: "Related parties."
+          properties:
+            debtorAccountIban:
+              $ref: '#/components/schemas/debtorAccountIban'
+            creditorAccountIban:
+              $ref: '#/components/schemas/creditorAccountIban'
+        execution:
+          $ref: '#/components/schemas/Execution'
+        validity:
+          $ref: '#/components/schemas/Validity'
+        description:
+          $ref: '#/components/schemas/description'
+        symbols:
+          $ref: '#/components/schemas/Symbols'
+
+    RecurringPaymentsList:
+      properties:
+        pageNumber:
+          $ref: '#/components/schemas/pageNumber'
+        pageCount:
+          $ref: '#/components/schemas/pageCount'
+        pageSize:
+          $ref: '#/components/schemas/pageSize'
+
+        recurringPayment:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecurringPayment'
+
+    RecurringPayment:
+      type: object
+      properties:
+        transactionIdentification:
+          $ref: '#/components/schemas/transactionIdentification'
+        amount:
+          $ref: '#/components/schemas/amount'
+        parties:
+          type: object
+          description: "Related parties."
+          properties:
+            debtorAccountIban:
+              $ref: '#/components/schemas/debtorAccountIban'
+        execution:
+          $ref: '#/components/schemas/Execution'
+        description:
+          $ref: '#/components/schemas/description'
+        symbols:
+          $ref: '#/components/schemas/Symbols'
+
+    RecurringPaymentStatusResult:
+      type: object
+      properties:
+        merchantTransactionId:
+          type: string
+          format: uuid
+          description: "Unique transaction identifier generated by merchant"
+          example: "a110ce93-a63f-4608-a2c9-d92e2a7acbed"
+        resultCode:
+          type: string
+          description: |-
+            Recurring payment result code
+
+            __ResultCodes:__
+            * __IN_PROCESS__ - The payment order is in process. The user may not have authorized the order in the bank yet. We recommend to check the list of user's recurring payments.
+            * __ACCEPTED__ - The payment order was accepted by the bank for processing.
+            * __REJECTED__ - The payment order was rejected by the user or the payer's bank.
+
+          example: "ACCEPTED"
+          enum: [ IN_PROCESS, ACCEPTED, REJECTED ]
+        finalBankStatus:
+          type: boolean
+          description: "Indicates whether the resultCode for the transaction is final. If 'true', the merchant should no longer call this resource for the given transaction."
+          example: true
+
+    Symbols:
+      type: object
+      description: "Payment symbols."
+      properties:
+        variableSymbol:
+          $ref: '#/components/schemas/variableSymbol'
+        specificSymbol:
+          $ref: '#/components/schemas/specificSymbol'
+        constantSymbol:
+          $ref: '#/components/schemas/constantSymbol'
+
+    Validity:
+      type: object
+      description: "Elements restricting the validity of the recurring payment."
+      properties:
+        requestedExecutionDate:
+          type: string
+          format: date
+          description: |-
+            Requested date of payment. ISODate i.e. YYYY-MM-DD.
+
+            where: YYYY = four-digit year MM = two-digit month (01=January, etc.) DD = two-digit day of month (01 through 31).
+        lastExecutionDate:
+          type: string
+          format: date
+          description: |-
+            Date when the last order will be processed. Null value responds to ending by the user. ISODate i.e. YYYY-MM-DD.
+
+            where: YYYY = four-digit year MM = two-digit month (01=January, etc.) DD = two-digit day of month (01 through 31).
+        maxIterations:
+          type: number
+          description: "Maximum number of iterations - processing of the recurring payment."
+          example: 1
+
+    Error:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: "Date time of the response."
+          example: "2021-04-19T10:47:04.074795+02:00"
+        code:
+          type: string
+          description: "Error code. For list of used codes see the chapter [Error codes](#section/Error-handling/Error-codes)."
+          example: 213
+        message:
+          type: string
+          description: "Error message."
+          example: "Invalid input merchantId without value. Problem: merchantId is required parameter"
+        xrequestId:
+          type: string
+          format: uuid
+          description: "Identifier that can be used to report the issue."
+          example: "508e9f32-c7e1-4740-924a-2d5833b5eff4"

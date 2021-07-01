@@ -1,0 +1,1009 @@
+openapi: 3.0.3
+
+info:
+  title: "Finbricks.com API - Account information"
+  description: "Finbricks.com API - Account information"
+  version: "1.0.11"
+
+servers:
+  - url: https://api.zaplaceno.cz/
+    description: Production server
+  - url: https://api.sandbox.zaplaceno.cz/
+    description: Sandbox server (uses live data)
+
+tags:
+  - name: BankAccountInformation
+    description: Bank account information
+
+paths:
+  /account/list:
+    get:
+      tags:
+        - BankAccountInformation
+      summary: "List of user's accounts"
+      operationId: accountListGet
+      parameters:
+        - $ref: '#/components/parameters/merchantIdParam'
+        - $ref: '#/components/parameters/clientIdParam'
+        - $ref: '#/components/parameters/operationIdParam'
+        - $ref: '#/components/parameters/paymentProviderParam'
+        - $ref: '#/components/parameters/signatureParam'
+      responses:
+        200:
+          description: "Ok - returns list of allowed payment providers"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountList'
+        default:
+          description: Some error occured - see chapter [Error handling](#section/Error-handling) for possible values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /account/balance:
+    get:
+      tags:
+        - BankAccountInformation
+      summary: "Balances for user's accounts"
+      operationId: accountBalanceGet
+      parameters:
+        - $ref: '#/components/parameters/merchantIdParam'
+        - $ref: '#/components/parameters/clientIdParam'
+        - $ref: '#/components/parameters/operationIdParam'
+        - $ref: '#/components/parameters/paymentProviderParam'
+        - $ref: '#/components/parameters/bankAccountIdParam'
+        - $ref: '#/components/parameters/signatureParam'
+      responses:
+        200:
+          description: "OK - Returns account balance"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountBalance'
+        default:
+          description: Some error occured - see chapter [Error handling](#section/Error-handling) for possible values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /account/listWithBalance:
+    get:
+      tags:
+        - BankAccountInformation
+      summary: "User's accounts with balances"
+      operationId: accountListWithBalanceGet
+      parameters:
+        - $ref: '#/components/parameters/merchantIdParam'
+        - $ref: '#/components/parameters/clientIdParam'
+        - $ref: '#/components/parameters/operationIdParam'
+        - $ref: '#/components/parameters/paymentProviderParam'
+        - $ref: '#/components/parameters/signatureParam'
+      responses:
+        200:
+          description: "Ok - returns account with balance"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountListWithBalance'
+        default:
+          description: Some error occured - see chapter [Error handling](#section/Error-handling) for possible values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /account/transactions:
+    get:
+      tags:
+        - BankAccountInformation
+      summary: "User's account transactions"
+      operationId: accountTransactionsGet
+      parameters:
+        - $ref: '#/components/parameters/merchantIdParam'
+        - $ref: '#/components/parameters/clientIdParam'
+        - $ref: '#/components/parameters/operationIdParam'
+        - $ref: '#/components/parameters/paymentProviderParam'
+
+        - $ref: '#/components/parameters/bankAccountIdParam'
+        - $ref: '#/components/parameters/dateFromParam'
+        - $ref: '#/components/parameters/dateToParam'
+        - $ref: '#/components/parameters/currencyParam'
+        - $ref: '#/components/parameters/sizeParam'
+        - $ref: '#/components/parameters/pageParam'
+
+        - $ref: '#/components/parameters/signatureParam'
+      responses:
+        200:
+          description: "Ok - returns bank account transaction history"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountTransactions'
+        default:
+          description: Some error occured - see chapter [Error handling](#section/Error-handling) for possible values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  parameters:
+    signatureParam:
+      in: header
+      name: signature
+      required: true
+      schema:
+        type: string
+      description: "Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request)."
+    merchantIdParam:
+      in: query
+      name: merchantId
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: "Unique merchant identifier from merchant registration process."
+
+    clientIdParam:
+      in: query
+      name: clientId
+      required: false
+      schema:
+        type: string
+      description: "Identification of client (end-user). `clientId` or `operationId` is required."
+
+    operationIdParam:
+      in: query
+      name: operationId
+      required: false
+      schema:
+        type: string
+        format: uuid
+      description: "End-user identifier assigned by Finbricks.com. `clientId` or `operationId` is required. For more information, see chapter [Identifiers](#section/Introduction/Identifiers)."
+
+    paymentProviderParam:
+      in: query
+      name: paymentProvider
+      required: true
+      schema:
+        type: string
+      example:  "KB"
+      description: |-
+        In case you would like to choose the payer bank on your side (e-shop), fill in the value.
+
+        In case you would like to let the end-user select the bank on Zaplaceno.cz front-end, leave it empty.
+
+        Enumeration of possible values can be obtained from __/paymentProviders__ endpoint.
+
+    bankAccountIdParam:
+      in: query
+      name: bankAccountId
+      required: true
+      schema:
+        type: string
+      example: "y3FeaZyvItso-clhpV18X60orMVgulFdBx7"
+      description: "API payment account identifier from the response to a query on the list of accounts."
+
+    currencyParam:
+      in: query
+      name: currency
+      required: false
+      schema:
+        type: string
+      example: "CZK"
+      description: "Account currency. CurrencyCode, ISO 4217."
+
+    dateFromParam:
+      in: query
+      name: dateFrom
+      required: false
+      schema:
+        type: string
+        format: date
+      example: "2020-09-30"
+      description: "Date of the start of required transaction history. Format yyyy-MM-dd."
+
+    dateToParam:
+      in: query
+      name: dateTo
+      required: false
+      schema:
+        type: string
+        format: date
+      example: "2020-09-30"
+      description: "Date of the end of required transaction history [inclusive]. Format yyyy-MM-dd."
+
+    sizeParam:
+      in: query
+      name: size
+      required: false
+      schema:
+        type: number
+      example: 20
+      description: "Paging. Number of entries per page. There is a limit 50 per page to the number of records that helps prevent a bank request from timeouting."
+
+    pageParam:
+      in: query
+      name: page
+      required: false
+      schema:
+        type: number
+      example: 0
+      description: "Paging. Required page. Default: 0"
+
+  schemas:
+    AccountList:
+      properties:
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Account'
+
+    Account:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/bankAccountId'
+        identification:
+          $ref: '#/components/schemas/AccountIdentification'
+        currency:
+          $ref: '#/components/schemas/currency'
+        servicer:
+          type: object
+          properties:
+            bankCode:
+              $ref: '#/components/schemas/bankCode'
+            countryCode:
+              $ref: '#/components/schemas/countryCode'
+            bic:
+              $ref: '#/components/schemas/bic'
+        accountName:
+          $ref: '#/components/schemas/accountName'
+        productName:
+          $ref: '#/components/schemas/productName'
+        ownersNames:
+          $ref: '#/components/schemas/ownersNames'
+        pispSuitable:
+          $ref: '#/components/schemas/pispSuitable'
+
+    AccountBalance:
+      type: object
+      properties:
+        balanceType:
+          $ref: '#/components/schemas/balanceType'
+        amount:
+          $ref: '#/components/schemas/Amount'
+        creditDebitIndicator:
+          $ref: '#/components/schemas/creditDebitIndicator'
+        dateTime:
+          $ref: '#/components/schemas/dateTime'
+
+    AccountListWithBalance:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            $ref: '#/components/schemas/bankAccountId'
+          identification:
+            $ref: '#/components/schemas/AccountIdentification'
+          balance:
+            type: number
+            example: 372.88
+            description: "Value/amount of account balance."
+          currency:
+            $ref: '#/components/schemas/currency'
+          productName:
+            $ref: '#/components/schemas/productName'
+          accountName:
+            $ref: '#/components/schemas/accountName'
+          pispSuitable:
+            $ref: '#/components/schemas/pispSuitable'
+          ownersNames:
+            $ref: '#/components/schemas/ownersNames'
+          creditDebitIndicator:
+            $ref: '#/components/schemas/creditDebitIndicator'
+          dateTime:
+            $ref: '#/components/schemas/dateTime'
+          bic:
+            $ref: '#/components/schemas/bic'
+
+    AccountIdentification:
+      type: object
+      properties:
+        accountNumber:
+          type: string
+          example: "1230723110207/0100"
+          description: |-
+            API payment account identifier from the response to a query on the list of accounts.
+
+            Depending on bank the account number can be in different formats e.g. including or excluding bank code.
+
+        iban:
+          $ref: '#/components/schemas/iban'
+
+    accountName:
+      type: string
+      example: "Můj účet"
+      description: "Account name."
+
+    Amount:
+      type: object
+      description: "Payment amount and the currency."
+      properties:
+        value:
+          $ref: '#/components/schemas/value'
+        currency:
+          $ref: '#/components/schemas/currency'
+
+    bankAccountId:
+      type: string
+      example: "y3FeaZyvItso-clhpV18X60orMVgulFdBx7"
+      description: "API payment account identifier from the response to a query on the list of accounts."
+
+    bankCode:
+      type: string
+      example: "0100"
+      description: "Bank Code"
+
+    balanceType:
+      type: string
+      example: "CLAV"
+      description: |-
+        Indicates the type of balance to which the balance information relates. For more information see Czech Standard for Open Banking.
+
+        Example values:
+        * CLAV
+        * PRCD
+        * CLBD
+        * ITBD
+        * ITAV
+
+    bic:
+      type: string
+      example: "KOMBCZPP"
+      description: "BIC / SWIFT code of the payer bank. ISO 9362"
+
+    dateTime:
+      type: string
+      format: date-time
+      example: "2020-09-30T14:45:54.169Z"
+      description: "Date or date and time according to ISO 8601."
+
+    countryCode:
+      type: string
+      example: "CZ"
+      description: "CountryCode, ISO 3166 (2 alphanumeric characters code version)."
+
+    creditDebitIndicator:
+      type: string
+      enum: [ DBIT, CRDT ]
+      example: "DBIT"
+      description: |-
+        Indication of whether this is a debit payment or credit payment in the account.
+
+        * __DBIT__ - To the debit of
+        * __CRDT__ - In other cases
+
+    currency:
+      type: string
+      example: "CZK"
+      description: "CurrencyCode, ISO 4217."
+
+    iban:
+      type: string
+      example: "CZ1401000001230727810207"
+      description: "International format of IBAN account no."
+
+    ownersNames:
+      type: array
+      items:
+        type: string
+        example: "Jan Novak"
+      description: "Array of name/s of the account holder/s for consumers or trade name/s for commercial clients."
+
+    productName:
+      type: string
+      example: "Kreditka"
+      description: "Product name"
+
+    pispSuitable:
+      type: boolean
+      example: "true"
+      description: "Indication whether the account number is suitable for payment transactions."
+
+    value:
+      type: number
+      example: 372.88
+      description: "Value/amount."
+
+    additionalTransactionInformation:
+      type: string
+      example: "Domácí platba - záloha plyn"
+      description: "Additional information provided by the bank. Only stated if it is included in the record. Additional info for SEPA DD is entered here (e.g., Creditor Identifier, Payment scheme, SEPA collection order, etc.)"
+
+    additionalRemittanceInformation:
+      type: string
+      example: "Platba za energie"
+      description: "Additional free text information for payer of up to 140 characters."
+
+    reference:
+      type: string
+      description: "Start the field with the VS code: (for variable symbol), or SS: (for specific symbol) or KS: (for constant symbol). In one repetition of the reference field, all three symbols may be stated, each time maximum one repetition of each individual symbol. The method of recording symbols is VS:|KS:|SS:)[0-9]{1,10}."
+
+    unstructured:
+      type: string
+      description: "Additional payment information filled in in the payment as unstructured information. If the payment states several repetitions of unstructured record supplementing payment information, then only the first of them will be considered."
+
+    memberIdentification:
+      type: string
+      description: "Local code format of the payer bank code."
+
+    entryReference:
+      type: string
+      example: "RB-4567813"
+      description: "Identification no. of the payment assigned by the bank"
+
+    status:
+      type: string
+      example: "BOOK"
+      description: |-
+        Item status (debited or credited payments) of the account from the point of view of the bank. The statement will present only posted items, with the constant BOOK, or blocked items, with the constant PDNG.
+
+        Example values:
+
+        * __BOOK__ - posted items
+        * __PDNG__ - blocked items
+        * INFO - status specific for some banks
+
+    reversalIndicator:
+      type: boolean
+      description: |-
+        Indication of whether it is a cancellation. An expression of whether it is a cancellation or not is marked with one of the codes below:
+
+        - true: It is cancellation
+        - false: It is not cancellation"
+
+    exchangeRate:
+      type: number
+      example: 1
+      description: "The exchange rate used to charge a payment. Only one rate is filled in, even in the case of cross conversion."
+
+    BookingDate:
+      type: object
+      description: "Date of processing/posting of payment by bank in the format ISODate, YYYY-MM-DD."
+      properties:
+        date:
+          type: string
+          format: date
+          description: |-
+            Date of processing/posting of payment by bank in the format ISODate, YYYY-MM-DD.
+
+            where: YYYY = four-digit year MM = two-digit month (01=January, etc.) DD = two-digit day of month (01 through 31).
+
+    ValueDate:
+      type: object
+      description: "Due date/payment foreign currency in the format ISODate, YYYY-MM-DD"
+      properties:
+        date:
+          type: string
+          format: date
+          description: |-
+            Due date/payment foreign currency in the format ISODate i.e. YYYY-MM-DD.
+
+            where: YYYY = four-digit year MM = two-digit month (01=January, etc.) DD = two-digit day of month (01 through 31).
+
+    Structured:
+      type: object
+      example: "VS:0123456789,KS:0308,SS:1234567890"
+      description: |-
+        The completion of payment symbols (variable, specific and constant) is expected.
+
+        If the payment does not have a variable, specific or constant symbol, then the entire Structured Remittance Information will be left empty.
+
+      properties:
+        creditorReferenceInformation:
+          $ref: '#/components/schemas/CreditorReferenceInformation'
+
+    Transactions:
+      type: array
+      description: "List of transactions"
+      items:
+        type: object
+        properties:
+          entryReference:
+            $ref: '#/components/schemas/entryReference'
+          amount:
+            $ref: '#/components/schemas/Amount'
+          creditDebitIndicator:
+            $ref: '#/components/schemas/creditDebitIndicator'
+          reversalIndicator:
+            $ref: '#/components/schemas/reversalIndicator'
+          status:
+            $ref: '#/components/schemas/status'
+          bookingDate:
+            $ref: '#/components/schemas/BookingDate'
+          valueDate:
+            $ref: '#/components/schemas/ValueDate'
+          bankTransactionCode:
+            $ref: '#/components/schemas/BankTransactionCode'
+          entryDetails:
+            $ref: '#/components/schemas/EntryDetails'
+
+    AccountTransactions:
+      type: object
+      properties:
+        pageNumber:
+          type: number
+          example: 0
+          description: "Number of current page"
+        pageCount:
+          type: number
+          example: 2
+          description: "Total number of query pages"
+        pageSize:
+          type: number
+          example: 100
+          description: "Number of entries per page. This parameter can match the required size value from the query, except for the cases when it is the last page, or when the requested page range exceeded the maximum limit defined for the particular API resource."
+        nextPage:
+          type: number
+          example: 1
+          description: "The number of the next page. If the current page is at the same time the last page of the list, then this parameter is not listed or is given with a null value."
+        transactions:
+          $ref: '#/components/schemas/Transactions'
+
+    BankTransactionCode:
+      type: object
+      description: "The code of banking transaction according to the code list of the Czech Banking Association assigned to a specific payment. Each bank uses an own code list to identify payments, which is, however, based on the 1st to 3rd level of transaction code list according to the CBA Standard for camt.053."
+      properties:
+        proprietary:
+          type: object
+          description: "The code of banking transaction according to the code list of the Czech Banking Association assigned to a specific payment. Each bank uses an own code list to identify payments, which is, however, based on the 1st to 3rd level of transaction code list according to the CBA Standard for camt.053."
+          properties:
+            code:
+              type: string
+              example: "40000201000"
+              description: "The code of banking transaction according to the code list of the Czech Banking Association assigned to a specific payment. Each bank uses an own code list to identify payments, which is, however, based on the 1st to 3rd level of transaction code list according to the CBA Standard for camt.053."
+            issuer:
+              type: string
+              example: "CBA"
+              description: "Identification of the code list issuer for banking transactions which acquires the value of the CBA."
+
+    OrganisationIdentification:
+      type: object
+      description: "Clear payer identification as the organization/legal entity."
+      properties:
+        bicOrBei:
+          type: string
+          description: "Payer identification as the organization/legal entity in the form of BIC or BEI code."
+        other:
+          $ref: '#/components/schemas/Other'
+
+    PrivateIdentification:
+      type: object
+      description: "Clear payer identification as the natural person."
+      properties:
+        other:
+          $ref: '#/components/schemas/Other'
+
+    Other:
+      type: object
+      description: "Other payer identification as the organization/legal entity."
+      properties:
+        identification:
+          type: string
+          description: "Other payer identification as the organization/legal entity in unstructured form."
+        schemeName:
+          type: object
+          description: "Code type for payer identification as the organization/legal entity."
+          properties:
+            code:
+              type: string
+              description: "Code type for payer identification as the organization/legal entity in the form of code according to the ISO code list."
+            proprietary:
+              type: string
+              description: "Code type for payer identification as the organization/legal entity in the free text format."
+            issuer:
+              type: string
+              description: "Code issuer for the payer identification as the organization/legal entity."
+
+    PostalAddress:
+      type: object
+      description: "Payer postal address."
+      properties:
+        streetName:
+          type: string
+          description: "Street name used for the payer postal address."
+        buildingNumber:
+          type: string
+          description: "Land registry no. used for the payer postal address."
+        postCode:
+          type: string
+          description: "Postcode used for the payer postal address."
+        townName:
+          type: string
+          description: "Town name used for the payer postal address."
+        country:
+          $ref: '#/components/schemas/countryCode'
+        addressLine:
+          type: string
+          description: "Unstructured record of payer postal address."
+
+    Debtor:
+      type: object
+      description: "Information on the payer. It is according to the payment direction, and filled in in the case of counterparty."
+      properties:
+        name:
+          type: string
+          description: "Payer name."
+        postalAddress:
+          $ref: '#/components/schemas/PostalAddress'
+        identification:
+          type: object
+          description: "Other payer identification as the organization/legal entity in unstructured form."
+          properties:
+            organisationIdentification:
+              $ref: '#/components/schemas/OrganisationIdentification'
+            privateIdentification:
+              $ref: '#/components/schemas/PrivateIdentification'
+
+    DebtorAccount:
+      type: object
+      description: "Information on the account payer. It is according to the payment direction, and filled in in the case of counterparty."
+      properties:
+        identification:
+          type: object
+          description: "Identification of account payer type."
+          properties:
+            iban:
+              $ref: '#/components/schemas/iban'
+            other:
+              type: object
+              description: "Payer account no. in other/local format of account no."
+              properties:
+                identification:
+                  type: string
+                  description: "The value of payer account no. in other/local format of account no."
+        currency:
+          $ref: '#/components/schemas/currency'
+        name:
+          type: string
+          description: "Payer account name."
+
+    UltimateCreditor:
+      type: object
+      description: "Information on the final payee. It is according to the payment direction, and filled in in the case of counterparty."
+      properties:
+        name:
+          type: string
+          description: "Final payee name."
+        postalAddress:
+          $ref: '#/components/schemas/PostalAddress'
+        identification:
+          type: object
+          description: "Final payee identification."
+          properties:
+            organisationIdentification:
+              $ref: '#/components/schemas/OrganisationIdentification'
+            privateIdentification:
+              $ref: '#/components/schemas/PrivateIdentification'
+
+    UltimateDebtor:
+      type: object
+      description: "Information on the original/actual payer. It is according to the payment direction, and filled in in the case of counterparty."
+      properties:
+        name:
+          type: string
+          description: "Name of the original/actual payer."
+        postalAddress:
+          $ref: '#/components/schemas/PostalAddress'
+        identification:
+          type: object
+          description: "Original payer identification."
+          properties:
+            organisationIdentification:
+              $ref: '#/components/schemas/OrganisationIdentification'
+            privateIdentification:
+              $ref: '#/components/schemas/PrivateIdentification'
+
+    Creditor:
+      type: object
+      description: "Information on the payee. It is according to the payment direction, and filled in in the case of counterparty."
+      properties:
+        name:
+          type: string
+          description: "Payee name."
+        postalAddress:
+          $ref: '#/components/schemas/PostalAddress'
+        identification:
+          type: object
+          description: "Payee identification."
+          properties:
+            organisationIdentification:
+              $ref: '#/components/schemas/OrganisationIdentification'
+            privateIdentification:
+              $ref: '#/components/schemas/PrivateIdentification'
+
+    CreditorAccount:
+      type: object
+      description: "Information on the payee account. It is according to the payment direction, and filled in in the case of counterparty."
+      properties:
+        identification:
+          type: object
+          description: "Identification of payee account type."
+          properties:
+            iban:
+              $ref: '#/components/schemas/iban'
+            other:
+              type: object
+              description: "Payee account no. in other/local format of account no."
+              properties:
+                identification:
+                  type: string
+                  description: "The value of payee account no. in other/local format of account no."
+        currency:
+          $ref: '#/components/schemas/currency'
+        name:
+          type: string
+          description: "Payee account name."
+
+    RelatedParties:
+      type: object
+      description: "Information on the payer, the payer's account and the original payer and payee, the payee's account and the final payee in the payment."
+      properties:
+        debtor:
+          $ref: '#/components/schemas/Debtor'
+        debtorAccount:
+          $ref: '#/components/schemas/DebtorAccount'
+        ultimateDebtor:
+          $ref: '#/components/schemas/UltimateDebtor'
+        creditor:
+          $ref: '#/components/schemas/Creditor'
+        creditorAccount:
+          $ref: '#/components/schemas/CreditorAccount'
+        ultimateCreditor:
+          $ref: '#/components/schemas/UltimateCreditor'
+        proprietary:
+          type: object
+          description: "For more detailed identification of on which ATM the card transaction occurred."
+          properties:
+            type:
+              type: string
+              description: "For identification of whether for the card transaction it is own / external ATM."
+            party:
+              type: object
+              description: "For identification of the ATM name/owner."
+              properties:
+                name:
+                  type: string
+                  description: "For identification of ATM name/location."
+
+    ClearingSystemIdentification:
+      type: object
+      description: "Payer bank identification in the local payment system in which the payer bank works."
+      properties:
+        code:
+          type: string
+          description: "Payer bank identification in the local payment system in which the payer bank works in the form of payment system code."
+        proprietary:
+          type: string
+          description: "Payer bank identification in the local payment system in which the payer bank works in unstructured form of descriptive text."
+
+    ClearingSystemMemberIdentification:
+      type: object
+      description: "Local format of the payer bank code – either in the code form or in the form of text description."
+      properties:
+        clearingSystemIdentification:
+          $ref: '#/components/schemas/ClearingSystemIdentification'
+        memberIdentification:
+          $ref: '#/components/schemas/memberIdentification'
+
+    FinancialInstitutionIdentification:
+      type: object
+      description: "Payer bank code in the international format BIC / SWIFT code."
+      properties:
+        bic:
+          $ref: '#/components/schemas/bic'
+        clearingSystemMemberIdentification:
+          $ref: '#/components/schemas/ClearingSystemMemberIdentification'
+        name:
+          type: string
+          description: "Payer bank code as stated in the code list of world banks (SWIFT Directory)."
+        postalAddress:
+          $ref: '#/components/schemas/PostalAddress'
+        other:
+          type: object
+          description: "Other payee bank identification."
+          properties:
+            identification:
+              type: string
+              description: "Other payer bank identification, mainly in the form of the so-called local bank code."
+
+    DebtorAgent:
+      type: object
+      description: "Information on the payer bank. It is according to the payment direction, and filled in in the case of counterparty."
+      properties:
+        financialInstitutionIdentification:
+          $ref: '#/components/schemas/FinancialInstitutionIdentification'
+
+    CreditorAgent:
+      type: object
+      description: "Information on the payee bank. It is according to the payment direction, and filled in in the case of counterparty."
+      properties:
+        financialInstitutionIdentification:
+          $ref: '#/components/schemas/FinancialInstitutionIdentification'
+
+    RelatedAgents:
+      type: object
+      description: "Information on the payer bank and the payee bank in the payment."
+      properties:
+        debtorAgent:
+          $ref: '#/components/schemas/DebtorAgent'
+        creditorAgent:
+          $ref: '#/components/schemas/CreditorAgent'
+
+    EntryDetails:
+      type: object
+      properties:
+        transactionDetails:
+          $ref: '#/components/schemas/TransactionDetails'
+
+    CurrencyExchange:
+      type: object
+      description: "Information on currencies and exchange rates used."
+      properties:
+        sourceCurrency:
+          $ref: '#/components/schemas/currency'
+        targetCurrency:
+          $ref: '#/components/schemas/currency'
+        exchangeRate:
+          $ref: '#/components/schemas/exchangeRate'
+
+    CounterValueAmount:
+      type: object
+      description: "The amount and currency of payment in the client account currency after conversion of amount that was required by the client for transfer."
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        currencyExchange:
+          $ref: '#/components/schemas/CurrencyExchange'
+
+    ProprietaryAmount:
+      type: object
+      description: "Amount of cash withdrawal through the Cashback service."
+      properties:
+        type:
+          type: string
+          example: "CASHBACK"
+          description: "The constant 'CASHBACK' is to be filled in."
+        amount:
+          $ref: '#/components/schemas/Amount'
+
+    InstructedAmount:
+      type: object
+      description: "Amount and currency of payment in the currency that was required by the client for transfer. E.g., for intra-bank payments, the payer account currency and the payment currency if the client required the payment in the payer account currency."
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+
+    TransactionAmount:
+      type: object
+      description: "The amount and currency of payment for cumulated payments and Cashback."
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+
+    AmountDetails:
+      type: object
+      properties:
+        instructedAmount:
+          $ref: '#/components/schemas/InstructedAmount'
+        transactionAmount:
+          $ref: '#/components/schemas/TransactionAmount'
+        counterValueAmount:
+          $ref: '#/components/schemas/CounterValueAmount'
+        proprietaryAmount:
+          $ref: '#/components/schemas/ProprietaryAmount'
+
+    Charges:
+      type: object
+      description: "Information on fees."
+      properties:
+        bearer:
+          type: string
+          example: "SHA"
+          description: "Indication of that payments will be charged to his debit (OUR, SHA, BEN)."
+
+    Purpose:
+      type: object
+      description: "Payment purpose."
+      properties:
+        code:
+          type: string
+          description: "Payment purpose expressed as a code that was entered in the payment."
+        proprietary:
+          type: string
+          description: "Payment purpose expressed as unstructured information that was entered in the payment."
+
+    CreditorReferenceInformation:
+      type: object
+      description: "To display information on variable, specific and constant symbol."
+      properties:
+        reference:
+          $ref: '#/components/schemas/reference'
+
+    RemittanceInformation:
+      type: object
+      description: "Additional payment information."
+      properties:
+        unstructured:
+          $ref: '#/components/schemas/unstructured'
+        structured:
+          $ref: '#/components/schemas/Structured'
+
+    TransactionDetailsReferences:
+      type: object
+      properties:
+        messageIdentification:
+          type: string
+        accountServicerReference:
+          type: string
+        paymentInformationIdentification:
+          type: string
+        instructionIdentification:
+          type: string
+        endToEndIdentification:
+          type: string
+        mandateIdentification:
+          type: string
+        chequeNumber:
+          type: string
+        clearingSystemReference:
+          type: string
+
+    TransactionDetails:
+      type: object
+      properties:
+        references:
+          $ref: '#/components/schemas/TransactionDetailsReferences'
+        amountDetails:
+          $ref: '#/components/schemas/AmountDetails'
+        charges:
+          $ref: '#/components/schemas/Charges'
+        relatedParties:
+          $ref: '#/components/schemas/RelatedParties'
+        relatedAgents:
+          $ref: '#/components/schemas/RelatedAgents'
+        purpose:
+          $ref: '#/components/schemas/Purpose'
+        remittanceInformation:
+          $ref: '#/components/schemas/RemittanceInformation'
+        additionalTransactionInformation:
+          $ref: '#/components/schemas/additionalTransactionInformation'
+        additionalRemittanceInformation:
+          $ref: '#/components/schemas/additionalRemittanceInformation'
+
+    Error:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: "Date time of the response."
+          example: "2021-04-19T10:47:04.074795+02:00"
+        code:
+          type: string
+          description: "Error code. For list of used codes see the chapter [Error codes](#section/Error-handling/Error-codes)."
+          example: 213
+        message:
+          type: string
+          description: "Error message."
+          example: "Invalid input merchantId without value. Problem: merchantId is required parameter"
+        xrequestId:
+          type: string
+          format: uuid
+          description: "Identifier that can be used to report the issue."
+          example: "508e9f32-c7e1-4740-924a-2d5833b5eff4"

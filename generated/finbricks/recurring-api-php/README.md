@@ -1,0 +1,123 @@
+# OpenAPIClient-php
+
+Finbricks.com API - Recurring payments
+
+
+## Installation & Usage
+
+### Requirements
+
+PHP 7.2 and later.
+
+### Composer
+
+To install the bindings via [Composer](https://getcomposer.org/), add the following to `composer.json`:
+
+```json
+{
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/finbricks/recurring-api-php.git"
+    }
+  ],
+  "require": {
+    "finbricks/recurring-api-php": "*@dev"
+  }
+}
+```
+
+Then run `composer install`
+
+### Manual Installation
+
+Download the files and include `autoload.php`:
+
+```php
+<?php
+require_once('/path/to/OpenAPIClient-php/vendor/autoload.php');
+```
+
+## Getting Started
+
+Please follow the [installation procedure](#installation--usage) and then run the following:
+
+```php
+<?php
+require_once(__DIR__ . '/vendor/autoload.php');
+
+
+
+
+$apiInstance = new Finbricks\Api\Recurring\Api\RecurringPaymentsApi(
+    // If you want use custom http client, pass your client which implements `GuzzleHttp\ClientInterface`.
+    // This is optional, `GuzzleHttp\Client` will be used as default.
+    new GuzzleHttp\Client()
+);
+$merchantId = c3073b9d-edd0-49f2-a28d-b7ded8ff9a8b; // string | Unique merchant identifier from merchant registration process
+$paymentProvider = KB; // string | Provider code. Example values KB, AIRBANK, MONETA, CSAS, CSOB, RAIFFEISEN, EQUA, FIO...
+$transactionIdentification = 3G3148492; // string | Identifier of recurring payment instruction.
+$signature = d7fILo5uES9aX/uHgz/N4qZq2MN5lKnxv6HzQx7gVaXcMSRwzcc+k8FXWcyA3FzC5Ps0kxmiwSkR8Rco6vFsyfo3nubtuqPByfhV9kZ5gG4o3JUZAchZL99M6zX4uVBVMs+DWuUX80jlHVOk6DLsOYMoMVEoTAoPUQL22GsPelMFG9ZyujbNAY23jKJxi/Y89s2/n5+OsIG0+LlDD1fpxbROzPQcXj2dZXGI7CqTEAEQvnS0wCJvpJPdxcyKxF+F7wpmlzJLD3kMA8w6ffw4O8DX00KJOJv2ROLd3u1whtLqO7unbHYkNVk05q6gT4nl1TMkKtZP0I/dCuGrWzf0QlBTLExK2JTYpj3mvKuWBJWcJDb61sAn3r+SE7zltmY9cqgnX9UId8Ax97ToqwGl6GUFv47LN+gOp88V7H4HIGu8C1+VF0OxRgIerSrKKHg0GgoxBWkT8XJr3ULdegE4AtQqQIpZZZPE3ios5+3LU/HjlNQnpoMwgcPPZE4UX5vN2uRIYkugcTn7CF13OTX9Qdqfy21gvO9Jbu+pydlyvod6HyvDiEv4W1v8Nex1yrS7rVW8vkufb8K/aTt9LxZxb+4ZM4c6Zd0n+FwkZSma25mNTNOAwJ321ev82PTLuw8mGqM8oPZKSR+sU0WVrzOQvpdBKwjgryKLoS8AoiPSoxY=; // string | Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request).
+$clientId = 'clientId_example'; // string | Identification of the client (end-user).
+$operationId = 'operationId_example'; // string | End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Introduction/Identifiers).
+
+try {
+    $result = $apiInstance->recurringPaymentDetail($merchantId, $paymentProvider, $transactionIdentification, $signature, $clientId, $operationId);
+    print_r($result);
+} catch (Exception $e) {
+    echo 'Exception when calling RecurringPaymentsApi->recurringPaymentDetail: ', $e->getMessage(), PHP_EOL;
+}
+
+```
+
+## API Endpoints
+
+All URIs are relative to *https://api.zaplaceno.cz*
+
+Class | Method | HTTP request | Description
+------------ | ------------- | ------------- | -------------
+*RecurringPaymentsApi* | [**recurringPaymentDetail**](docs/Api/RecurringPaymentsApi.md#recurringpaymentdetail) | **GET** /recurringPayments/detail | Detail of user&#39;s recurring payment
+*RecurringPaymentsApi* | [**recurringPaymentsInit**](docs/Api/RecurringPaymentsApi.md#recurringpaymentsinit) | **POST** /recurringPayments/init | Recurring payment inicialization
+*RecurringPaymentsApi* | [**recurringPaymentsList**](docs/Api/RecurringPaymentsApi.md#recurringpaymentslist) | **GET** /recurringPayments/list | List of user&#39;s recurring payments
+*RecurringPaymentsApi* | [**recurringPaymentsListWithDetail**](docs/Api/RecurringPaymentsApi.md#recurringpaymentslistwithdetail) | **GET** /recurringPayments/listWithDetail | List of user&#39;s recurring payments with details
+*RecurringPaymentsApi* | [**recurringPaymentsStatus**](docs/Api/RecurringPaymentsApi.md#recurringpaymentsstatus) | **GET** /recurringPayments/status | Transaction status
+
+## Models
+
+- [Amount](docs/Model/Amount.md)
+- [Error](docs/Model/Error.md)
+- [Execution](docs/Model/Execution.md)
+- [InitResult](docs/Model/InitResult.md)
+- [RecurringPayment](docs/Model/RecurringPayment.md)
+- [RecurringPaymentDetail](docs/Model/RecurringPaymentDetail.md)
+- [RecurringPaymentDetailParties](docs/Model/RecurringPaymentDetailParties.md)
+- [RecurringPaymentInit](docs/Model/RecurringPaymentInit.md)
+- [RecurringPaymentParties](docs/Model/RecurringPaymentParties.md)
+- [RecurringPaymentStatusResult](docs/Model/RecurringPaymentStatusResult.md)
+- [RecurringPaymentsList](docs/Model/RecurringPaymentsList.md)
+- [RecurringPaymentsListWithDetail](docs/Model/RecurringPaymentsListWithDetail.md)
+- [Symbols](docs/Model/Symbols.md)
+- [Validity](docs/Model/Validity.md)
+
+## Authorization
+All endpoints do not require authorization.
+## Tests
+
+To run the tests, use:
+
+```bash
+composer install
+vendor/bin/phpunit
+```
+
+## Author
+
+
+
+## About this package
+
+This PHP package is automatically generated by the [OpenAPI Generator](https://openapi-generator.tech) project:
+
+- API version: `1.4.1`
+    - Package version: `0.0.1`
+- Build package: `org.openapitools.codegen.languages.PhpClientCodegen`

@@ -1,0 +1,39 @@
+{
+  "name": "finbricks/finbricks-php-sdk",
+  "version": "0.0.3",
+  "description": "SDK for Finbricks openapi products",
+  "keywords": [
+    "openapi",
+    "composer",
+    "package"
+  ],
+  "homepage": "https://github.com/finbricks/finbricks-php-sdk",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Mikhail Klochkov",
+      "email": "mikhail.klochkov@cleverlance.com"
+    }
+  ],
+  "type": "project",
+  "require": {
+    "php": "^7.1|^8.0",
+    "jane-php/open-api-runtime": "~7",
+    "guzzlehttp/guzzle": "^6.2",
+    "ext-json": "*",
+    "ext-openssl": "*",
+    "monolog/monolog": "^2.2"
+  },
+  "require-dev": {
+
+    "phpunit/phpunit": "9.5.5",
+    "jane-php/open-api-3": "~7",
+    "friendsofphp/php-cs-fixer": "v2.19.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Finbricks\\Sdk\\": "src"
+    },
+    "classmap": ["generated/finbricks"]
+  }
+}

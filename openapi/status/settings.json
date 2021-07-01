@@ -1,0 +1,14 @@
+{
+  "composerVendorName": "finbricks",
+  "composerProjectName": "status-api-php",
+  "artifactVersion": "0.0.1",
+  "invokerPackage": "Finbricks\\Api\\Status",
+  "modelPackage": "Model",
+  "apiPackage": "Api",
+  "variableNamingConvention": "camelCase",
+  "packagePath": "status-api-php",
+  "srcBasePath": "src",
+  "gitUserId": "finbricks",
+  "gitRepoId": "status-api-php",
+  "validateSpec": true
+}
