@@ -1,0 +1,13 @@
+{
+  "composerVendorName": "finbricks",
+  "composerProjectName": "bankid-sdk-php",
+  "invokerPackage": "Finbricks\\Api\\BankId",
+  "modelPackage": "Model",
+  "apiPackage": "Api",
+  "variableNamingConvention": "camelCase",
+  "packagePath": "bankid-sdk-php",
+  "srcBasePath": "src",
+  "gitUserId": "finbricks",
+  "gitRepoId": "bankid-api-php",
+  "validateSpec": true
+}

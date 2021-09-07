@@ -3,7 +3,7 @@ openapi: 3.0.3
 info:
   title: "Finbricks.com API - Account information"
   description: "Finbricks.com API - Account information"
-  version: "1.0.11"
+  version: "1.0.12"
 
 servers:
   - url: https://api.zaplaceno.cz/
@@ -508,33 +508,30 @@ components:
         creditorReferenceInformation:
           $ref: '#/components/schemas/CreditorReferenceInformation'
 
-    Transactions:
-      type: array
+    Transaction:
+      type: object
       description: "List of transactions"
-      items:
-        type: object
-        properties:
-          entryReference:
-            $ref: '#/components/schemas/entryReference'
-          amount:
-            $ref: '#/components/schemas/Amount'
-          creditDebitIndicator:
-            $ref: '#/components/schemas/creditDebitIndicator'
-          reversalIndicator:
-            $ref: '#/components/schemas/reversalIndicator'
-          status:
-            $ref: '#/components/schemas/status'
-          bookingDate:
-            $ref: '#/components/schemas/BookingDate'
-          valueDate:
-            $ref: '#/components/schemas/ValueDate'
-          bankTransactionCode:
-            $ref: '#/components/schemas/BankTransactionCode'
-          entryDetails:
-            $ref: '#/components/schemas/EntryDetails'
+      properties:
+        entryReference:
+          $ref: '#/components/schemas/entryReference'
+        amount:
+          $ref: '#/components/schemas/Amount'
+        creditDebitIndicator:
+          $ref: '#/components/schemas/creditDebitIndicator'
+        reversalIndicator:
+          $ref: '#/components/schemas/reversalIndicator'
+        status:
+          $ref: '#/components/schemas/status'
+        bookingDate:
+          $ref: '#/components/schemas/BookingDate'
+        valueDate:
+          $ref: '#/components/schemas/ValueDate'
+        bankTransactionCode:
+          $ref: '#/components/schemas/BankTransactionCode'
+        entryDetails:
+          $ref: '#/components/schemas/EntryDetails'
 
     AccountTransactions:
-      type: object
       properties:
         pageNumber:
           type: number
@@ -553,7 +550,9 @@ components:
           example: 1
           description: "The number of the next page. If the current page is at the same time the last page of the list, then this parameter is not listed or is given with a null value."
         transactions:
-          $ref: '#/components/schemas/Transactions'
+          type: array
+          items:
+            $ref: '#/components/schemas/Transaction'
 
     BankTransactionCode:
       type: object

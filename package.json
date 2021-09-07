@@ -9,7 +9,8 @@
     "generate:platform": "openapi-generator-cli generate -c openapi/platform/settings.json  -i openapi/platform/pgw-platform-api.yml -g php -o generated/finbricks/platform-api-php",
     "generate:recurring": "openapi-generator-cli generate -c openapi/recurring_payment/settings.json  -i openapi/recurring_payment/recurring-payment-api.yml -g php -o generated/finbricks/recurring-api-php",
     "generate:status": "openapi-generator-cli generate -c openapi/status/settings.json  -i openapi/status/status-api.yml -g php -o generated/finbricks/status-api-php",
-    "generate": "npm run downloadLatest && npm run generate:auth && npm run generate:eshop &&npm run  generate:info &&npm run  generate:platform && npm run generate:recurring &&npm run  generate:status"
+    "generate:bankid": "openapi-generator-cli generate -c openapi/bankid/settings.json  -i openapi/bankid/bankid-api.yml -g php -o generated/finbricks/bankid-api-php",
+    "generate": "npm run downloadLatest && npm run generate:auth && npm run generate:eshop &&npm run  generate:info &&npm run  generate:platform && npm run generate:recurring &&npm run  generate:status&&npm run  generate:bankid"
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.3.3",

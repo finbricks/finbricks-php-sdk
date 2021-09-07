@@ -1,0 +1,1029 @@
+openapi: 3.0.3
+
+info:
+  title: "Finbricks.com API - BankId services"
+  description: "Finbricks.com API - BankId services"
+  version: "1.0.0"
+
+servers:
+  - url: https://api.finbricks.com/
+    description: Production server
+  - url: https://api.sandbox.finbricks.com/
+    description: Sandbox server (uses live data)
+
+tags:
+  - name: BankId
+    description: BankId services
+
+paths:
+  /bankId/authenticate:
+    post:
+      description: |
+        This endpoint serves as a starting point, which can be used to obtain a link to the end user's login in a bank that supports bankId.
+
+        Supported scopeGroups for /bankId/connect endpoint:
+
+        * __CONNECT__
+          * user id
+          * name (name, given_name, family_name, middle_name, nickname, preferred_username)
+          * phonenumber
+          * email
+
+        Supported scopeGroups for /bankId/profile endpoint:
+
+        * __KYC_BASIC__
+          * *all from CONNECT* plus:
+          * addresses (addresses.type, addresses.street, addresses.buildingapartment, addresses.streetnumber, addresses.city, addresses.zipcode, addresses.country, ruian_reference)
+          * birthdate
+          * birthnumber
+          * titles
+          * gender
+        * __KYC_PLUS__
+          * *all from KYC_BASIC* plus:
+          * birthplace
+          * idcards (idcards.type, idcards.description, idcards.country, idcards.number, idcards.valid_to, issuer, issue_date)
+          * legalstatus
+          * maritalstatus
+          * paymentAccounts
+        * __AML__
+          * *all from KYC_PLUS* plus:
+          * AML verification
+
+      operationId: bankIdAuthenticate
+      tags:
+        - BankId
+      parameters:
+        - $ref: '#/components/parameters/signature'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BankIdAuthRequest"
+      summary: "Get redirect url for end-user to BankId authentication"
+      responses:
+        200:
+          description: "RedirectUrl to BankId generated"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankIdAuthResponse'
+        default:
+          description: Some error occured - see chapter [Error handling](#section/Error-handling) for possible values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      callbacks:
+        paymentFinished:
+          '{$request.query.callbackUrl}/':
+            get:
+              parameters:
+                - $ref: '#/components/parameters/clientIdForBankId'
+                - $ref: '#/components/parameters/code'
+                - $ref: '#/components/parameters/error'
+              responses:
+                '200':
+                  description: "OK"
+
+  /bankId/connect:
+    get:
+      description: |
+        The Connect Endpoint is resource that returns user data for authenticated end-user.
+
+        Connect endpoint is intended primarily for frequently performed identification and authentication, such as repeated login processes to the system/application.
+
+        Access is authorized using a valid end-user access_token that was obtained from a completed login flow (/bankId/authenticate).
+
+        ScopeGroup is set to `CONNECT`.
+
+      operationId: bankIdConnect
+      tags:
+        - BankId
+      parameters:
+        - $ref: '#/components/parameters/merchantId'
+        - $ref: '#/components/parameters/clientIdForBankId'
+        - $ref: '#/components/parameters/provider'
+        - $ref: '#/components/parameters/signature'
+      summary: "Returns basic Claims about the authenticated End-User"
+      responses:
+        200:
+          description: "RedirectUrl to BankId generated"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfo'
+        default:
+          description: Some error occured - see chapter [Error handling](#section/Error-handling) for possible values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /bankId/profile:
+    get:
+      summary: Returns an extended (down to AML) set of authenticated End-User information.
+      description: |
+        Unlike Connect, the Profile API is designed primarily to perform KYC or AML client authentication. This corresponds to a much more extensive range of data provided. For supported scopes and claims see desctription of `/bankId/authenticate` endpoint.
+
+        Access is authorized using a valid end-user access_token that was obtained from a completed login flow (/bankId/authenticate).
+
+        Use one of listed `scopeGroup`:
+        * KYC_BASIC
+        * KYC_PLUS
+        * AML
+
+      tags:
+        - BankId
+      parameters:
+        - $ref: '#/components/parameters/merchantId'
+        - $ref: '#/components/parameters/clientIdForBankId'
+        - $ref: '#/components/parameters/provider'
+        - $ref: '#/components/parameters/scopeGroup'
+        - $ref: '#/components/parameters/signature'
+      responses:
+        200:
+          description: "RedirectUrl to BankId generated"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        default:
+          description: Some error occured - see chapter [Error handling](#section/Error-handling) for possible values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /bankId/revoke:
+    delete:
+      summary: "Delete all existing user authentications"
+      operationId: bankIdDelete
+      description: |
+        TODO - This endpoint is inteded for end user revocation.
+
+
+      tags:
+        - BankId
+      parameters:
+        - $ref: '#/components/parameters/merchantId'
+        - $ref: '#/components/parameters/signature'
+        - $ref: '#/components/parameters/clientIdForBankId'
+        - $ref: '#/components/parameters/provider'
+      responses:
+        204:
+          description: "Ok - Successfully deleted"
+        default:
+          description: Some error occured - see chapter [Error handling](#section/Error-handling) for possible values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /bankId/banks:
+    get:
+      tags:
+        - BankId
+      summary: "List of banks supported by BankId."
+      operationId: BankIdBanks
+
+      parameters:
+        - $ref: '#/components/parameters/merchantId'
+        - $ref: '#/components/parameters/signature'
+      responses:
+        200:
+          description: "Ok - returns list of BankId supported banks."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Banks'
+        default:
+          description: Some error occured - see chapter [Error handling](#section/Error-handling) for possible values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+components:
+  parameters:
+    clientIdForBankId:
+      in: query
+      name: clientIdForBankId
+      required: true
+      example: "0000001"
+      schema:
+        type: string
+        maxLength: 100
+      description: "Id identifying the end user at the merchant."
+
+    code:
+      in: query
+      name: code
+      schema:
+        type: number
+        example: 101
+      description: "Error code"
+
+    error:
+      in: query
+      name: error
+      schema:
+        type: string
+        example: "[InvalidAccountCurrency] – invalid currency of the required account."
+      description: "Error description"
+
+    merchantId:
+      in: query
+      name: merchantId
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: "c3073b9d-edd0-49f2-a28d-b7ded8ff9a8b"
+      description: "Unique merchant identifier from merchant registration process"
+
+    provider:
+      in: query
+      name: provider
+      required: true
+      schema:
+        type: string
+        example: "CSAS"
+      description: "Provider code. Identifier of the bank where the end user authenticates. Example values CSOB, CSAS."
+
+    scopeGroup:
+      in: query
+      name: scopeGroup
+      required: true
+      schema:
+        type: string
+        example: "KYC_BASIC"
+        enum: [ KYC_BASIC, KYC_PLUS, AML ]
+      description: "Scope group defines, what scopes will be requested when authentication in the bank. For more information see description of `/bankId/authenticate` endpoint."
+
+    signature:
+      in: header
+      name: signature
+      required: true
+      schema:
+        type: string
+        example: "d7fILo5uES9aX/uHgz/N4qZq2MN5lKnxv6HzQx7gVaXcMSRwzcc+k8FXWcyA3FzC5Ps0kxmiwSkR8Rco6vFsyfo3nubtuqPByfhV9kZ5gG4o3JUZAchZL99M6zX4uVBVMs+DWuUX80jlHVOk6DLsOYMoMVEoTAoPUQL22GsPelMFG9ZyujbNAY23jKJxi/Y89s2/n5+OsIG0+LlDD1fpxbROzPQcXj2dZXGI7CqTEAEQvnS0wCJvpJPdxcyKxF+F7wpmlzJLD3kMA8w6ffw4O8DX00KJOJv2ROLd3u1whtLqO7unbHYkNVk05q6gT4nl1TMkKtZP0I/dCuGrWzf0QlBTLExK2JTYpj3mvKuWBJWcJDb61sAn3r+SE7zltmY9cqgnX9UId8Ax97ToqwGl6GUFv47LN+gOp88V7H4HIGu8C1+VF0OxRgIerSrKKHg0GgoxBWkT8XJr3ULdegE4AtQqQIpZZZPE3ios5+3LU/HjlNQnpoMwgcPPZE4UX5vN2uRIYkugcTn7CF13OTX9Qdqfy21gvO9Jbu+pydlyvod6HyvDiEv4W1v8Nex1yrS7rVW8vkufb8K/aTt9LxZxb+4ZM4c6Zd0n+FwkZSma25mNTNOAwJ321ev82PTLuw8mGqM8oPZKSR+sU0WVrzOQvpdBKwjgryKLoS8AoiPSoxY="
+      description: "Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request)."
+
+  schemas:
+    BankLogo:
+      type: object
+      required:
+        - id
+        - url
+        - width
+        - height
+      properties:
+        id:
+          type: string
+          description: "Unique identifier of bank logo"
+          example: BB23F99B-F5B8-4EB5-8BC1-93A3E1ED123B
+        url:
+          type: string
+          format: uri
+          description: |
+            Absolute URL of the logo image.
+            Must not require any authentication to download, so that it can safely be used in an image tag.
+          example: https://bankid.example.com/bank_images/BB23F99B-F5B8-4EB5-8BC1-93A3E1ED123B.png
+        width:
+          type: number
+          description: "Width of the logo image"
+          example: 256
+        height:
+          type: number
+          description: "Height of the logo image"
+          example: 256
+
+    BankIdAuthRequest:
+      type: object
+      required:
+        - merchantId
+        - clientIdForBankId
+        - provider
+        - scope
+        - scopeGroup
+        - callbackUrl
+      properties:
+        merchantId:
+          type: string
+          format: uuid
+          description: "Unique merchant identifier assigned by the payment gateway."
+        clientIdForBankId:
+          type: string
+          description: "Id identifying the end user at the merchant."
+        provider:
+          type: string
+          example: "CSAS"
+          description: "Provider code. Example values CSOB, CSAS"
+        scopeGroup:
+          $ref: '#/components/schemas/scopeGroup'
+        callbackUrl:
+          type: string
+          example: "https://example.com/callback"
+          description: "The URL address of the merchant to which the payment gateway will callback after the user authentication is completed. The merchant will receive `clientIdForBankId` as a query param."
+
+    BankIdAuthResponse:
+      type: object
+      required:
+        - authStatus
+      properties:
+        authStatus:
+          type: string
+          description: |
+            Authentication status
+
+            * __auth_approved__ - The client has already been authenticated before and the merchnat can call Account information APIs.
+            * __need_auth__ - The client has not been authenticated before OR the authentication has expired. The merchant should redirect the client to the `redirectUrl`.
+
+          enum: [ auth_approved, need_auth ]
+        redirectUrl:
+          type: string
+          description: |
+            URL to bank's auth gateway
+
+            The `redirectUrl` will be returned in case the client has not been authenticated before or the authentication expired.
+            The merchant should redirect the client to this `redirectUrl`.
+
+    Banks:
+      description: "List of supported banks by BankId."
+      properties:
+        banks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bank'
+
+    Bank:
+      type: object
+      description: "Information about supported bank by BankId."
+      properties:
+        name:
+          type: "string"
+          description: "Name of the provider in Czech."
+          example: "Komerční banka"
+        provider:
+          type: "string"
+          description: "Provider code in Finbricks."
+          example: "KB"
+        logoImages:
+          type: array
+          items:
+            $ref: '#/components/schemas/BankLogo'
+          description: List of different available logo sizes. SeP should decide which logo is most appropriate for it's use case.
+
+    UserInfo:
+      type: object
+      description: ''
+      properties:
+        sub:
+          $ref: '#/components/schemas/sub'
+        txn:
+          $ref: '#/components/schemas/txn_data'
+        verified_claims:
+          $ref: '#/components/schemas/Verified_claims_userinfo'
+        name:
+          $ref: '#/components/schemas/name'
+        given_name:
+          $ref: '#/components/schemas/given_name'
+        family_name:
+          $ref: '#/components/schemas/family_name'
+        middle_name:
+          $ref: '#/components/schemas/middle_name'
+        nickname:
+          $ref: '#/components/schemas/nickname'
+        preferred_username:
+          $ref: '#/components/schemas/preferred_username'
+        email:
+          $ref: '#/components/schemas/email'
+        email_verified:
+          $ref: '#/components/schemas/email_verified'
+        gender:
+          $ref: '#/components/schemas/gender'
+        birthdate:
+          $ref: '#/components/schemas/birthdate'
+        zoneinfo:
+          $ref: '#/components/schemas/zoneinfo'
+        locale:
+          $ref: '#/components/schemas/locale'
+        phone_number:
+          $ref: '#/components/schemas/phone_number'
+        phone_number_verified:
+          $ref: '#/components/schemas/phone_number_verified'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+      required:
+        - sub
+        - txn
+
+    Profile:
+      description: Provide detailed information about user
+      properties:
+        sub:
+          $ref: '#/components/schemas/sub'
+        txn:
+          $ref: '#/components/schemas/txn_data'
+        verified_claims:
+          $ref: '#/components/schemas/Verified_claims'
+        title_prefix:
+          $ref: '#/components/schemas/title_prefix'
+        title_suffix:
+          $ref: '#/components/schemas/title_suffix'
+        given_name:
+          $ref: '#/components/schemas/given_name'
+        family_name:
+          $ref: '#/components/schemas/family_name'
+        middle_name:
+          $ref: '#/components/schemas/middle_name'
+        gender:
+          $ref: '#/components/schemas/gender'
+        birthdate:
+          $ref: '#/components/schemas/birthdate'
+        birthnumber:
+          $ref: '#/components/schemas/birthnumber'
+        age:
+          $ref: '#/components/schemas/age'
+        majority:
+          $ref: '#/components/schemas/majority'
+        date_of_death:
+          $ref: '#/components/schemas/date_of_death'
+        birthplace:
+          $ref: '#/components/schemas/birthplace'
+        primary_nationality:
+          $ref: '#/components/schemas/primary_nationality'
+        nationalities:
+          $ref: '#/components/schemas/Nationalities'
+        maritalstatus:
+          $ref: '#/components/schemas/maritalstatus'
+        addresses:
+          $ref: '#/components/schemas/Addresses'
+        idcards:
+          $ref: '#/components/schemas/Idcards'
+        email:
+          $ref: '#/components/schemas/email'
+        phone_number:
+          $ref: '#/components/schemas/phone_number'
+        pep:
+          $ref: '#/components/schemas/pep'
+        limited_legal_capacity:
+          $ref: '#/components/schemas/limited_legal_capacity'
+        paymentAccounts:
+          $ref: '#/components/schemas/PaymentAccounts'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+      required:
+        - sub
+        - txn
+
+
+    Address:
+      type: object
+      title: address
+      description: User's address
+      properties:
+        type:
+          type: string
+          title: type
+          description: |
+            Type of address element as an ENUM:
+              * `PERMANENT_RESIDENCE` - permanent residence address
+              * `SECONDARY_RESIDENCE` - secondary residence address
+              * `UNKNOWN` - unknown address type
+          enum:
+            - PERMANENT_RESIDENCE
+            - SECONDARY_RESIDENCE
+            - UNKNOWN
+        street:
+          type: string
+          title: street
+          description: Street
+        buildingapartment:
+          type: string
+          title: buildingapartment
+          description: Address land registry number.
+        streetnumber:
+          type: string
+          title: streetnumber
+          description: Additional address house number.
+        city:
+          type: string
+          title: city
+          description: City name.
+        zipcode:
+          type: string
+          title: zipcode
+          description: Zip code of the address.
+        country:
+          type: string
+          title: country
+          description:
+            Country Code, ISO 3166-1 format, subtype ALPHA-2. This means two
+            letters in uppercase.
+        ruian_reference:
+          type: string
+          title: ruian_reference
+          description: Address reference to the register of territorial identification, addresses and real estate (RUIAN)
+          example: '144560291'
+      required:
+        - type
+        - city
+        - zipcode
+        - country
+
+    Addresses:
+      type: array
+      description: "User's address"
+      items:
+        $ref: '#/components/schemas/Address'
+
+    age:
+      type: number
+      description: Current age of the client given in years.
+      example: 28
+
+    birthdate:
+      type: string
+      description: End-User's birthday, represented as an ISO 8601:2004
+        [ISO8601-2004] YYYY-MM-DD format. The year MAY be 0000,
+        indicating that it is omitted. To represent only the year,
+        YYYY format is allowed. Note that depending on the underlying
+        platform's date related function, providing just year can
+        result in varying month and day, so the implementers need to
+        take this factor into account to correctly process the dates.
+      format: date
+      example: 1970-08-01
+
+    birthnumber:
+      type: string
+      description: User's birth number. Birth number is required if nationality
+        is Czech ("CZ").
+      example: '1101700140'
+
+    birthplace:
+      type: string
+      description: User's birth place.
+      example: 'Praha 4'
+
+    Claims:
+      description: |
+        Object that is the container for the verified Claims about the End-User.
+
+        This is an element that will eventually be used by IDP in the future when the data will be verified, for example,
+        against state basic registers.
+      type: object
+      properties:
+        title_prefix:
+          $ref: '#/components/schemas/title_prefix'
+        title_suffix:
+          $ref: '#/components/schemas/title_suffix'
+        given_name:
+          $ref: '#/components/schemas/given_name'
+        family_name:
+          $ref: '#/components/schemas/family_name'
+        middle_name:
+          $ref: '#/components/schemas/middle_name'
+        gender:
+          $ref: '#/components/schemas/gender'
+        birthdate:
+          $ref: '#/components/schemas/birthdate'
+        birthnumber:
+          $ref: '#/components/schemas/birthnumber'
+        age:
+          $ref: '#/components/schemas/age'
+        majority:
+          $ref: '#/components/schemas/majority'
+        date_of_death:
+          $ref: '#/components/schemas/date_of_death'
+        birthplace:
+          $ref: '#/components/schemas/birthplace'
+        primary_nationality:
+          $ref: '#/components/schemas/primary_nationality'
+        nationalities:
+          $ref: '#/components/schemas/Nationalities'
+        maritalstatus:
+          $ref: '#/components/schemas/maritalstatus'
+        addresses:
+          $ref: '#/components/schemas/Addresses'
+        idcards:
+          $ref: '#/components/schemas/Idcards'
+        email:
+          $ref: '#/components/schemas/email'
+        phone_number:
+          $ref: '#/components/schemas/phone_number'
+        pep:
+          $ref: '#/components/schemas/pep'
+        limited_legal_capacity:
+          $ref: '#/components/schemas/limited_legal_capacity'
+        paymentAccounts:
+          $ref: '#/components/schemas/PaymentAccounts'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+      example:
+        given_name: Jan
+        family_name: Novák
+        gender: male
+        birthdate: '1970-08-01'
+        birthplace: 'Praha 4'
+
+    Claims_userinfo:
+      description: |
+        Object that is the container for the verified Claims about the End-User.
+
+        This is an element that will eventually be used by IDP in the future when the data will be verified, for example,
+        against state basic registers.
+
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/name'
+        given_name:
+          $ref: '#/components/schemas/given_name'
+        family_name:
+          $ref: '#/components/schemas/family_name'
+        middle_name:
+          $ref: '#/components/schemas/middle_name'
+        nickname:
+          $ref: '#/components/schemas/nickname'
+        preferred_username:
+          $ref: '#/components/schemas/preferred_username'
+        email:
+          $ref: '#/components/schemas/email'
+        email_verified:
+          $ref: '#/components/schemas/email_verified'
+        gender:
+          $ref: '#/components/schemas/gender'
+        birthdate:
+          $ref: '#/components/schemas/birthdate'
+        zoneinfo:
+          $ref: '#/components/schemas/zoneinfo'
+        locale:
+          $ref: '#/components/schemas/locale'
+        phone_number:
+          $ref: '#/components/schemas/phone_number'
+        phone_number_verified:
+          $ref: '#/components/schemas/phone_number_verified'
+        updated_at:
+          $ref: '#/components/schemas/updated_at'
+      example:
+        name: 'Jan Novák'
+        given_name: Jan
+        family_name: Novák
+        gender: male
+        birthdate: '1970-08-01'
+        birthplace: 'Praha 4'
+
+    date_of_death:
+      type: string
+      description:
+        'Date of death of the client. Practically still null. Only in the case of updating data (not yet part of the
+        standard definition) is it possible to receive a specific date.'
+      example: null
+
+    email:
+      type: string
+      description:
+        End-User's preferred e-mail address. Its value MUST conform to
+        the RFC 5322 [RFC5322] addr-spec syntax. The API consumer MUST
+        NOT rely upon this value being unique.
+      example: someone@example.com
+
+    email_verified:
+      type: boolean
+      description: True if the End-User's e-mail address has been verified;
+        otherwise false. When this Claim Value is true, this means
+        that the OP took affirmative steps to ensure that this e-mail
+        address was controlled by the End-User at the time the
+        verification was performed. The means by which an e-mail
+        address is verified is context-specific, and dependent upon
+        the trust framework or contractual agreements within which the
+        parties are operating.
+
+    family_name:
+      type: string
+      description: Surname(s) or last name(s) of the End-User. Note that in some
+        cultures, people can have multiple family names or no family
+        name; all can be present, with the names being separated by
+        space characters.
+      example: Novák
+
+    gender:
+      type: string
+      description: End-User's gender. Values defined by this specification are
+        female and male. Other values MAY be used when neither of the
+        defined values are applicable.
+      enum:
+        - male
+        - female
+        - other
+
+    given_name:
+      type: string
+      description: Given name(s) or first name(s) of the End-User. Note that in
+        some cultures, people can have multiple given names; all can
+        be present, with the names being separated by space
+        characters.
+      example: Jan
+
+    Idcard:
+      type: object
+      title: idcard
+      description: User's id card
+      properties:
+        type:
+          type: string
+          title: type
+          description: |
+            Id card type code:
+              * `ID` - Identity card.
+              * `P ` - Passport of the Czech Republic resident.
+              * `DL` - Driving license
+              * `IR` - Residence permit
+              * `VS` - Visa permit label
+              * `PS` - Residential label
+              * `UNKNOWN` - Unknown id card type
+          enum:
+            - ID
+            - P
+            - DL
+            - IR
+            - VS
+            - PS
+            - UNKNOWN
+        description:
+          type: string
+          title: description
+          description: Localized id card type description.
+        country:
+          type: string
+          title: country
+          description: Country for which is id card valid.
+        number:
+          type: string
+          title: number
+          description: Number of id card.
+        valid_to:
+          type: string
+          title: valid_to
+          description: Id card validity.
+        issuer:
+          type: string
+          title: issuer
+          description: Office that issued id card.
+          example: 'Úřad městské části Praha 4'
+        issue_date:
+          type: string
+          title: issue_date
+          description: Date of id card issue.
+          example: '2020-01-28'
+      required:
+        - type
+        - country
+        - number
+        - valid_to
+
+    Idcards:
+      type: array
+      title: idcards
+      description: User's id cards
+      items:
+        $ref: '#/components/schemas/Idcard'
+
+    limited_legal_capacity:
+      type: boolean
+      description: An indication of whether this is a person with limited legal capacity.
+      example: false
+
+    locale:
+      type: string
+      description: |
+        End-User's locale, represented as a BCP47 [RFC5646] language tag.
+        This is typically an ISO 639-1 Alpha-2 [ISO639-1] language code in lowercase and an ISO 3166-1 Alpha-2 [ISO3166-1] country code in uppercase,
+        separated by a dash. For example, en-US or fr-CA. As a compatibility note, some implementations have used an underscore as the separator
+        rather than a dash, for example, en_US; Relying Parties MAY choose to accept this locale syntax as well.
+      example: 'cs-CZ'
+
+    majority:
+      type: boolean
+      description: An person is over the threshold of adulthood as recognized or declared in law.
+      example: true
+
+    maritalstatus:
+      type: string
+      description: |
+        Marital status. One of:
+          * `COHABITATION` - cohabitation status.
+          * `MARRIED` - married status
+          * `DIVORCED` - divorced status
+          * `REGISTERED_PARTNERSHIP` - registered partnership status
+          * `REGISTERED_PARTNERSHIP_CANCELED` - registered partnership canceled status
+          * `WIDOWED` - widowed status
+          * `SINGLE` - single status
+          * `UNKNOWN` - unknown status
+      enum:
+        - COHABITATION
+        - MARRIED
+        - DIVORCED
+        - REGISTERED_PARTNERSHIP
+        - REGISTERED_PARTNERSHIP_CANCELED
+        - WIDOWED
+        - SINGLE
+        - UNKNOWN
+
+    middle_name:
+      type: string
+      description: Middle name(s) of the End-User. Note that in some cultures,
+        people can have multiple middle names; all can be present,
+        with the names being separated by space characters. Also note
+        that in some cultures, middle names are not used.
+
+    name:
+      type: string
+      description: End-User's full name in displayable form including all name
+        parts, possibly including titles and suffixes, ordered
+        according to the End-User's locale and preferences.
+      example: Jan Novák
+
+    Nationalities:
+      type: array
+      title: nationalities
+      description:
+        All user's nationalities, ISO 3166-1 format, subtype ALPHA-2. This
+        means two letters in uppercase.
+      items:
+        type: string
+      example: [ 'CZ', 'AT', 'SK' ]
+
+    nickname:
+      type: string
+      description:
+        Casual name of the End-User that may or may not be the same as
+        the given_name. For instance, a nickname value of Mike might
+        be returned alongside a given_name value of Michael.
+      example: Honzík
+
+    PaymentAccounts:
+      type: array
+      title: paymentAccounts
+      description: User's payment account numbers in CZ IBAN format.
+      items:
+        type: string
+        title: IBAN
+        description: User's payment account number in CZ IBAN format.
+
+    pep:
+      type: boolean
+      description:
+        Flag that the authenticated user is politically exposed person (PEP).
+        In financial regulation, a politically exposed person is one who has been entrusted
+        with a prominent public function. A PEP generally presents a higher risk for potential
+        involvement in bribery and corruption by virtue of their position and the influence that
+        they may hold.
+      example: false
+
+    phone_number:
+      type: string
+      description: |
+        End-User's preferred telephone number. E.164 [E.164] is RECOMMENDED as the format of this Claim, for example, +1 (425) 555-1212 or +56 (2) 687 2400.
+        If the phone number contains an extension, it is RECOMMENDED that the extension be represented using the RFC 3966 [RFC3966] extension syntax,
+        for example, +1 (604) 555-1234;ext=5678.
+      example: '+420 123 456 789'
+
+    phone_number_verified:
+      type: boolean
+      description: |
+        True if the End-User's phone number has been verified; otherwise false.
+        When this Claim Value is true, this means that the OP took affirmative steps to ensure that this phone number was controlled by the End-User
+        at the time the verification was performed. The means by which a phone number is verified is context-specific, and dependent upon the trust
+        framework or contractual agreements within which the parties are operating. When true, the phone_number Claim MUST be in E.164 format and any
+        extensions MUST be represented in RFC 3966 format.
+
+    preferred_username:
+      type: string
+      description: Shorthand name by which the End-User wishes to be referred to
+        at the RP, such as janedoe or j.doe. This value MAY be any
+        valid JSON string including special characters such as @, /,
+        or whitespace. The API consumer MUST NOT rely upon this value
+        being unique.
+      example: jan.novak
+
+    primary_nationality:
+      type: string
+      title: primary_nationality
+      description: Optional element user's primary nationality, ISO 3166-1 format, subtype ALPHA-2. This means two letters in uppercase.
+      example: 'CZ'
+
+    scopeGroup:
+      type: string
+      example: "CONNECT"
+      enum: [ CONNECT, KYC_BASIC, KYC_PLUS, AML ]
+      description: "Scope group defines, what scopes will be requested. For more information see description of `/bankId/authenticate` endpoint."
+
+    sub:
+      type: string
+      description: Identifier for the End-User at the Issuer.
+      example: 23f1ac00-5d54-4169-a288-794ae2ead0c4
+
+    title_prefix:
+      type: string
+      description: "End-User's title prefix."
+      example: 'Mgr.'
+
+    title_suffix:
+      type: string
+      description: "End-User's title suffix."
+      example: 'Csc.'
+
+    txn_data:
+      type: string
+      description:
+        The txn Claim as defined in [RFC8417] is used in the context of
+        this extension to build audit trails across the parties involved in an
+        OpenID Connect transaction.
+      example: 31470547-0f7f-4794-acb0-d959f5a711a5
+
+    updated_at:
+      type: number
+      description:
+        Time the End-User's information was last updated. Its value is a JSON number representing the number of seconds from 1970-01-01T0:0:0Z as measured in UTC until the date/time.
+      format: long
+      example: 1568188433000
+
+    Verification:
+      description: "This element contains the information about the process conducted to verify a person's identity and bind the respective person data to a user account."
+      type: object
+      required:
+        - trust_framework
+        - verification_process
+      properties:
+        trust_framework:
+          type: string
+          title: trust_framework
+          enum:
+            - cz_aml
+          description: 'String determining the trust framework governing the identity verification process and the identity assurance level of the OP.'
+        time:
+          type: string
+          format: 'date-time'
+          title: time
+          description: 'Time stamp in ISO 8601:2004 [ISO8601-2004] YYYY-MM-DDThh:mm:ss±hh format representing the date and time when identity verification took place. Presence of this element might be required for certain trust frameworks.'
+        verification_process:
+          type: string
+          title: verification_process
+          description: |
+            Reference to the identity verification process as performed by the identity providers. Used for
+            backtracing in case of disputes or audits. Presence of this element might be required for certain trust
+            frameworks. In the case of BankID, the value of this element requires the tax number of the bank
+            (financial institution) that carried out the identification process.
+
+            This is the bank's tax number, which is kept in the list of regulated and registered entities of the CNB JERRS.
+          example: '45244782'
+
+    Verified_claims:
+      description: 'By this element BankID wants to ensure that RPs cannot mix up verified and unverified Claims and incidentally process unverified Claims as verified Claims.'
+      type: object
+      properties:
+        verification:
+          $ref: '#/components/schemas/Verification'
+        claims:
+          $ref: '#/components/schemas/Claims'
+
+    Verified_claims_userinfo:
+      description: 'By this element BankID wants to ensure that RPs cannot mix up verified and unverified Claims and incidentally process unverified Claims as verified Claims.'
+      type: object
+      properties:
+        claims:
+          $ref: '#/components/schemas/Claims_userinfo'
+      required:
+        - verification
+
+    zoneinfo:
+      type: string
+      description: |
+        String from zoneinfo [zoneinfo] time zone database representing the End-User's time zone. For example, `Europe/Paris` or `America/Los_Angeles`.
+      example: 'Europe/Prague'
+
+    Error:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: "Date time of the response."
+          example: "2021-04-19T10:47:04.074795+02:00"
+        code:
+          type: string
+          description: "Error code. For list of used codes see the chapter [Error codes](#section/Error-handling/Error-codes)."
+          example: 213
+        message:
+          type: string
+          description: "Error message."
+          example: "Invalid input merchantId without value. Problem: merchantId is required parameter"
+        xrequestId:
+          type: string
+          format: uuid
+          description: "Identifier that can be used to report the issue."
+          example: "508e9f32-c7e1-4740-924a-2d5833b5eff4"

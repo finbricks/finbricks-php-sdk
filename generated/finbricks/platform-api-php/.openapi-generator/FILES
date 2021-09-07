@@ -1,4 +1,5 @@
 .gitignore
+.openapi-generator-ignore
 .php_cs
 .travis.yml
 README.md
@@ -20,3 +21,8 @@ src/Model/TransactionInitDTO.php
 src/Model/TransactionInitResultDTO.php
 src/Model/TransactionStatusResultDTO.php
 src/ObjectSerializer.php
+test/Api/PlatformTransactionApiTest.php
+test/Model/ErrorTest.php
+test/Model/TransactionInitDTOTest.php
+test/Model/TransactionInitResultDTOTest.php
+test/Model/TransactionStatusResultDTOTest.php
