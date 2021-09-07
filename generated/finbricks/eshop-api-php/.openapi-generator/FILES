@@ -1,4 +1,5 @@
 .gitignore
+.openapi-generator-ignore
 .php_cs
 .travis.yml
 README.md
@@ -28,3 +29,12 @@ src/Model/TransactionEshopStatusResultDTO.php
 src/Model/TransactionZaplacenoPlusInitDTO.php
 src/Model/TransactionZaplacenoPlusInitDTOAllOf.php
 src/ObjectSerializer.php
+test/Api/EshopTransactionApiTest.php
+test/Model/ErrorTest.php
+test/Model/PaymentProvidersEshopResultDTOAllowedBanksTest.php
+test/Model/PaymentProvidersEshopResultDTOTest.php
+test/Model/TransactionEshopInitDTOTest.php
+test/Model/TransactionEshopInitResultDTOTest.php
+test/Model/TransactionEshopStatusResultDTOTest.php
+test/Model/TransactionZaplacenoPlusInitDTOAllOfTest.php
+test/Model/TransactionZaplacenoPlusInitDTOTest.php
