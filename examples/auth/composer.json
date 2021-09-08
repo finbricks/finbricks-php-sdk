@@ -1,0 +1,22 @@
+{
+  "name": "finbricks-php-sdk-examples/auth",
+  "description": "Example project how use finbricks-php-sdk",
+  "type": "project",
+  "require": {
+    "php": "^8.0",
+    "finbricks/finbricks-php-sdk": "^1.1",
+    "guzzlehttp/guzzle": "^6.2",
+    "vlucas/phpdotenv": "^5.3"
+  },
+  "authors": [
+    {
+      "name": "Klochkov Mikhail",
+      "email": "mikhail.klochkov@cleverlance.com"
+    }
+  ],
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true
+  }
+}
