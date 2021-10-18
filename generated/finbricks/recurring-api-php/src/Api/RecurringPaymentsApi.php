@@ -124,7 +124,7 @@ class RecurringPaymentsApi
      * @param  string $transactionIdentification Identifier of recurring payment instruction. (required)
      * @param  string $signature Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request). (required)
      * @param  string $clientId Identification of the client (end-user). (optional)
-     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Introduction/Identifiers). (optional)
+     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Overview/Identifiers). (optional)
      *
      * @throws \Finbricks\Api\Recurring\ApiException on non-2xx response
      * @throws \InvalidArgumentException
@@ -146,7 +146,7 @@ class RecurringPaymentsApi
      * @param  string $transactionIdentification Identifier of recurring payment instruction. (required)
      * @param  string $signature Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request). (required)
      * @param  string $clientId Identification of the client (end-user). (optional)
-     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Introduction/Identifiers). (optional)
+     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Overview/Identifiers). (optional)
      *
      * @throws \Finbricks\Api\Recurring\ApiException on non-2xx response
      * @throws \InvalidArgumentException
@@ -257,7 +257,7 @@ class RecurringPaymentsApi
      * @param  string $transactionIdentification Identifier of recurring payment instruction. (required)
      * @param  string $signature Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request). (required)
      * @param  string $clientId Identification of the client (end-user). (optional)
-     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Introduction/Identifiers). (optional)
+     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Overview/Identifiers). (optional)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
@@ -282,7 +282,7 @@ class RecurringPaymentsApi
      * @param  string $transactionIdentification Identifier of recurring payment instruction. (required)
      * @param  string $signature Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request). (required)
      * @param  string $clientId Identification of the client (end-user). (optional)
-     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Introduction/Identifiers). (optional)
+     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Overview/Identifiers). (optional)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
@@ -333,7 +333,7 @@ class RecurringPaymentsApi
      * @param  string $transactionIdentification Identifier of recurring payment instruction. (required)
      * @param  string $signature Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request). (required)
      * @param  string $clientId Identification of the client (end-user). (optional)
-     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Introduction/Identifiers). (optional)
+     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Overview/Identifiers). (optional)
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
@@ -802,7 +802,7 @@ class RecurringPaymentsApi
      * @param  string $paymentProvider Provider code. Example values KB, AIRBANK, MONETA, CSAS, CSOB, RAIFFEISEN, EQUA, FIO... (required)
      * @param  string $signature Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request). (required)
      * @param  string $clientId Identification of the client (end-user). (optional)
-     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Introduction/Identifiers). (optional)
+     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Overview/Identifiers). (optional)
      * @param  int $size Paging. Number of entries per page. There is a limit to the number of records that helps prevent a bank request from timeouting. (optional)
      * @param  int $page Paging. Required page. Default: 0 (optional)
      *
@@ -825,7 +825,7 @@ class RecurringPaymentsApi
      * @param  string $paymentProvider Provider code. Example values KB, AIRBANK, MONETA, CSAS, CSOB, RAIFFEISEN, EQUA, FIO... (required)
      * @param  string $signature Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request). (required)
      * @param  string $clientId Identification of the client (end-user). (optional)
-     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Introduction/Identifiers). (optional)
+     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Overview/Identifiers). (optional)
      * @param  int $size Paging. Number of entries per page. There is a limit to the number of records that helps prevent a bank request from timeouting. (optional)
      * @param  int $page Paging. Required page. Default: 0 (optional)
      *
@@ -937,7 +937,7 @@ class RecurringPaymentsApi
      * @param  string $paymentProvider Provider code. Example values KB, AIRBANK, MONETA, CSAS, CSOB, RAIFFEISEN, EQUA, FIO... (required)
      * @param  string $signature Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request). (required)
      * @param  string $clientId Identification of the client (end-user). (optional)
-     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Introduction/Identifiers). (optional)
+     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Overview/Identifiers). (optional)
      * @param  int $size Paging. Number of entries per page. There is a limit to the number of records that helps prevent a bank request from timeouting. (optional)
      * @param  int $page Paging. Required page. Default: 0 (optional)
      *
@@ -963,7 +963,7 @@ class RecurringPaymentsApi
      * @param  string $paymentProvider Provider code. Example values KB, AIRBANK, MONETA, CSAS, CSOB, RAIFFEISEN, EQUA, FIO... (required)
      * @param  string $signature Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request). (required)
      * @param  string $clientId Identification of the client (end-user). (optional)
-     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Introduction/Identifiers). (optional)
+     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Overview/Identifiers). (optional)
      * @param  int $size Paging. Number of entries per page. There is a limit to the number of records that helps prevent a bank request from timeouting. (optional)
      * @param  int $page Paging. Required page. Default: 0 (optional)
      *
@@ -1015,7 +1015,7 @@ class RecurringPaymentsApi
      * @param  string $paymentProvider Provider code. Example values KB, AIRBANK, MONETA, CSAS, CSOB, RAIFFEISEN, EQUA, FIO... (required)
      * @param  string $signature Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request). (required)
      * @param  string $clientId Identification of the client (end-user). (optional)
-     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Introduction/Identifiers). (optional)
+     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Overview/Identifiers). (optional)
      * @param  int $size Paging. Number of entries per page. There is a limit to the number of records that helps prevent a bank request from timeouting. (optional)
      * @param  int $page Paging. Required page. Default: 0 (optional)
      *
@@ -1198,7 +1198,7 @@ class RecurringPaymentsApi
      * @param  string $paymentProvider Provider code. Example values KB, AIRBANK, MONETA, CSAS, CSOB, RAIFFEISEN, EQUA, FIO... (required)
      * @param  string $signature Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request). (required)
      * @param  string $clientId Identification of the client (end-user). (optional)
-     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Introduction/Identifiers). (optional)
+     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Overview/Identifiers). (optional)
      * @param  int $size Paging. Number of entries per page. There is a limit to the number of records that helps prevent a bank request from timeouting. (optional)
      * @param  int $page Paging. Required page. Default: 0 (optional)
      *
@@ -1221,7 +1221,7 @@ class RecurringPaymentsApi
      * @param  string $paymentProvider Provider code. Example values KB, AIRBANK, MONETA, CSAS, CSOB, RAIFFEISEN, EQUA, FIO... (required)
      * @param  string $signature Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request). (required)
      * @param  string $clientId Identification of the client (end-user). (optional)
-     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Introduction/Identifiers). (optional)
+     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Overview/Identifiers). (optional)
      * @param  int $size Paging. Number of entries per page. There is a limit to the number of records that helps prevent a bank request from timeouting. (optional)
      * @param  int $page Paging. Required page. Default: 0 (optional)
      *
@@ -1333,7 +1333,7 @@ class RecurringPaymentsApi
      * @param  string $paymentProvider Provider code. Example values KB, AIRBANK, MONETA, CSAS, CSOB, RAIFFEISEN, EQUA, FIO... (required)
      * @param  string $signature Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request). (required)
      * @param  string $clientId Identification of the client (end-user). (optional)
-     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Introduction/Identifiers). (optional)
+     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Overview/Identifiers). (optional)
      * @param  int $size Paging. Number of entries per page. There is a limit to the number of records that helps prevent a bank request from timeouting. (optional)
      * @param  int $page Paging. Required page. Default: 0 (optional)
      *
@@ -1359,7 +1359,7 @@ class RecurringPaymentsApi
      * @param  string $paymentProvider Provider code. Example values KB, AIRBANK, MONETA, CSAS, CSOB, RAIFFEISEN, EQUA, FIO... (required)
      * @param  string $signature Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request). (required)
      * @param  string $clientId Identification of the client (end-user). (optional)
-     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Introduction/Identifiers). (optional)
+     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Overview/Identifiers). (optional)
      * @param  int $size Paging. Number of entries per page. There is a limit to the number of records that helps prevent a bank request from timeouting. (optional)
      * @param  int $page Paging. Required page. Default: 0 (optional)
      *
@@ -1411,7 +1411,7 @@ class RecurringPaymentsApi
      * @param  string $paymentProvider Provider code. Example values KB, AIRBANK, MONETA, CSAS, CSOB, RAIFFEISEN, EQUA, FIO... (required)
      * @param  string $signature Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request). (required)
      * @param  string $clientId Identification of the client (end-user). (optional)
-     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Introduction/Identifiers). (optional)
+     * @param  string $operationId End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Overview/Identifiers). (optional)
      * @param  int $size Paging. Number of entries per page. There is a limit to the number of records that helps prevent a bank request from timeouting. (optional)
      * @param  int $page Paging. Required page. Default: 0 (optional)
      *

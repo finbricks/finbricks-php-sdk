@@ -15,6 +15,8 @@ statusPaymentProviders($merchantId, $signature, $paymentProvider): \Finbricks\Ap
 
 List of payment providers with their statuses.
 
+Get information about supported payment providers and their statuses.
+
 ### Example
 
 ```php

@@ -1,6 +1,6 @@
 # Finbricks\Api\Platform\PlatformTransactionApi
 
-All URIs are relative to https://api.zaplaceno.cz.
+All URIs are relative to https://api.finbricks.com.
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------

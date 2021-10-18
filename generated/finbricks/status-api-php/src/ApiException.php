@@ -10,7 +10,7 @@
  */
 
 /**
- * Finbricks.com API - System status services
+ * Finbricks.com / Zaplaceno.cz API - System status services
  *
  * Get information regarding outages of banking APIs and instant payments processing on one place.
  *

@@ -1,0 +1,13 @@
+{
+  "composerVendorName": "finbricks",
+  "composerProjectName": "split-sdk-php",
+  "invokerPackage": "Finbricks\\Api\\Split",
+  "modelPackage": "Model",
+  "apiPackage": "Api",
+  "variableNamingConvention": "camelCase",
+  "packagePath": "split-sdk-php",
+  "srcBasePath": "src",
+  "gitUserId": "finbricks",
+  "gitRepoId": "split-api-php",
+  "validateSpec": true
+}

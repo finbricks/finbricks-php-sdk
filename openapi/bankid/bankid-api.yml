@@ -3,7 +3,7 @@ openapi: 3.0.3
 info:
   title: "Finbricks.com API - BankId services"
   description: "Finbricks.com API - BankId services"
-  version: "1.0.0"
+  version: "1.0.2"
 
 servers:
   - url: https://api.finbricks.com/
@@ -155,14 +155,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /bankId/revoke:
+  /bankId/logout:
     delete:
-      summary: "Delete all existing user authentications"
-      operationId: bankIdDelete
-      description: |
-        TODO - This endpoint is inteded for end user revocation.
-
-
+      summary: "Logout end-user from BankId"
+      operationId: bankIdLogout
+      description: "The endpoint is used to log out the end-user form BankId."
       tags:
         - BankId
       parameters:
@@ -172,7 +169,7 @@ paths:
         - $ref: '#/components/parameters/provider'
       responses:
         204:
-          description: "Ok - Successfully deleted"
+          description: "Ok - Successfully logged out"
         default:
           description: Some error occured - see chapter [Error handling](#section/Error-handling) for possible values.
           content:
@@ -272,34 +269,6 @@ components:
       description: "Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request)."
 
   schemas:
-    BankLogo:
-      type: object
-      required:
-        - id
-        - url
-        - width
-        - height
-      properties:
-        id:
-          type: string
-          description: "Unique identifier of bank logo"
-          example: BB23F99B-F5B8-4EB5-8BC1-93A3E1ED123B
-        url:
-          type: string
-          format: uri
-          description: |
-            Absolute URL of the logo image.
-            Must not require any authentication to download, so that it can safely be used in an image tag.
-          example: https://bankid.example.com/bank_images/BB23F99B-F5B8-4EB5-8BC1-93A3E1ED123B.png
-        width:
-          type: number
-          description: "Width of the logo image"
-          example: 256
-        height:
-          type: number
-          description: "Height of the logo image"
-          example: 256
-
     BankIdAuthRequest:
       type: object
       required:
@@ -370,11 +339,10 @@ components:
           type: "string"
           description: "Provider code in Finbricks."
           example: "KB"
-        logoImages:
-          type: array
-          items:
-            $ref: '#/components/schemas/BankLogo'
-          description: List of different available logo sizes. SeP should decide which logo is most appropriate for it's use case.
+        logoUrl:
+          type: "string"
+          description: "Bank's logo URL. Logos are usualy in SVG format."
+          example: "https://cdn.sandbox.zaplaceno.cz/logos/banks/kb/kb.svg"
 
     UserInfo:
       type: object

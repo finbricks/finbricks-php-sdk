@@ -5,7 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **name** | **string** | Name of the provider in Czech. | [optional]
-**paymentProvider** | **string** | Provider code in Finbricks. | [optional]
+**paymentProvider** | **string** | Provider code. | [optional]
 **bankCode** | **string** | Bank code. | [optional]
 **countryCode** | **string** | CountryCode, ISO 3166 (2 alphanumeric characters code version). | [optional]
 **bic** | **string** | BIC - Business Identifier Code of the payer bank. ISO 9362. | [optional]

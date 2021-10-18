@@ -1,18 +1,22 @@
 openapi: 3.0.3
 info:
-  title: "Finbricks.com API - System status services"
+  title: "Finbricks.com / Zaplaceno.cz API - System status services"
   description: "Get information regarding outages of banking APIs and instant payments processing on one place."
   version: "1.0.1"
 
 servers:
   - url: https://api.zaplaceno.cz/
-    description: Production server
+    description: Production server for Zaplaceno.cz merchants
+  - url: https://api.finbricks.com/
+    description: Production server for Finbricks merchants
   - url: https://api.sandbox.zaplaceno.cz/
-    description: Sandbox server (uses live data)
+    description: Sandbox server for Zaplaceno.cz merchants (uses live data)
+  - url: https://api.sandbox.finbricks.com/
+    description: Sandbox server for Finbricks merchants (uses live data)
 
 tags:
   - name: status
-    description: Finbricks.com service - System status
+    description: Finbricks / Zaplaceno.cz service - System status
 
 paths:
 
@@ -21,6 +25,7 @@ paths:
       tags:
         - status
       summary: "List of payment providers with their statuses."
+      description: "Get information about supported payment providers and their statuses."
       operationId: statusPaymentProviders
 
       parameters:
@@ -92,7 +97,7 @@ components:
                     example: "Komerční banka"
                   paymentProvider:
                     type: "string"
-                    description: "Provider code in Finbricks."
+                    description: "Provider code."
                     example: "KB"
                   bankCode:
                     type: string

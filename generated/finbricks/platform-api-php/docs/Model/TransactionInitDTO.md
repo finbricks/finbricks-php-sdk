@@ -14,7 +14,7 @@ Name | Type | Description | Notes
 **specificSymbol** | **string** | Specific symbol. Some banks may trim &#39;0&#39;s at the beginning. | [optional]
 **constantSymbol** | **string** | Constant symbol. Some banks may trim &#39;0&#39;s at the beginning. | [optional]
 **callbackUrl** | **string** | URL that is called after process of payment is done. It is the place where the client should land after the payment. | [optional]
-**clientId** | **string** | Identification of a client (end-user). If the client has been authenticated before and his authentication in the bank is still valid, the step of user authentication in Zaplaceno.cz will be skipped. Otherwise standard authentication will be required. | [optional]
+**clientId** | **string** | Identification of a client (end-user). If the client has been authenticated before and his authentication in the bank is still valid, the step of user authentication will be skipped. Otherwise standard authentication will be required. | [optional]
 **instructionPriority** | **string** | If the \&quot;NORM\&quot; is specified, they will make the payment by default.  If the \&quot;INST\&quot; value is stated, the payer&#39;s provider executes the payment as Instant according to the applicable rule.  The deadlines for making standard and priority payments may vary depending on the type of payment and are governed by the terms of each payer&#39;s conditions. | [optional]
 **initiatorName** | **string** | Name of the initiator of the payment. The initiator is a party using your services. | [optional]
 

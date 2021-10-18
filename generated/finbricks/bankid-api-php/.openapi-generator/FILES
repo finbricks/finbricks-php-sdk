@@ -1,5 +1,4 @@
 .gitignore
-.openapi-generator-ignore
 .php_cs
 .travis.yml
 README.md
@@ -9,7 +8,6 @@ docs/Model/Address.md
 docs/Model/Bank.md
 docs/Model/BankIdAuthRequest.md
 docs/Model/BankIdAuthResponse.md
-docs/Model/BankLogo.md
 docs/Model/Banks.md
 docs/Model/Claims.md
 docs/Model/ClaimsUserinfo.md
@@ -33,7 +31,6 @@ src/Model/Address.php
 src/Model/Bank.php
 src/Model/BankIdAuthRequest.php
 src/Model/BankIdAuthResponse.php
-src/Model/BankLogo.php
 src/Model/Banks.php
 src/Model/Claims.php
 src/Model/ClaimsUserinfo.php
@@ -49,22 +46,3 @@ src/Model/Verification.php
 src/Model/VerifiedClaims.php
 src/Model/VerifiedClaimsUserinfo.php
 src/ObjectSerializer.php
-test/Api/BankIdApiTest.php
-test/Model/AddressTest.php
-test/Model/BankIdAuthRequestTest.php
-test/Model/BankIdAuthResponseTest.php
-test/Model/BankLogoTest.php
-test/Model/BankTest.php
-test/Model/BanksTest.php
-test/Model/ClaimsTest.php
-test/Model/ClaimsUserinfoTest.php
-test/Model/ErrorTest.php
-test/Model/GenderTest.php
-test/Model/IdcardTest.php
-test/Model/MaritalstatusTest.php
-test/Model/ProfileTest.php
-test/Model/ScopeGroupTest.php
-test/Model/UserInfoTest.php
-test/Model/VerificationTest.php
-test/Model/VerifiedClaimsTest.php
-test/Model/VerifiedClaimsUserinfoTest.php

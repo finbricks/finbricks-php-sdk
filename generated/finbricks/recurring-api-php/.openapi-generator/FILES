@@ -1,5 +1,4 @@
 .gitignore
-.openapi-generator-ignore
 .php_cs
 .travis.yml
 README.md
@@ -41,18 +40,3 @@ src/Model/RecurringPaymentsListWithDetail.php
 src/Model/Symbols.php
 src/Model/Validity.php
 src/ObjectSerializer.php
-test/Api/RecurringPaymentsApiTest.php
-test/Model/AmountTest.php
-test/Model/ErrorTest.php
-test/Model/ExecutionTest.php
-test/Model/InitResultTest.php
-test/Model/RecurringPaymentDetailPartiesTest.php
-test/Model/RecurringPaymentDetailTest.php
-test/Model/RecurringPaymentInitTest.php
-test/Model/RecurringPaymentPartiesTest.php
-test/Model/RecurringPaymentStatusResultTest.php
-test/Model/RecurringPaymentTest.php
-test/Model/RecurringPaymentsListTest.php
-test/Model/RecurringPaymentsListWithDetailTest.php
-test/Model/SymbolsTest.php
-test/Model/ValidityTest.php

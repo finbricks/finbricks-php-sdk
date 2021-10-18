@@ -3,12 +3,12 @@ openapi: 3.0.3
 info:
   title: "Finbricks.com API - User authentication services"
   description: "Finbricks.com API - User authentication services"
-  version: "1.2.3"
+  version: "1.2.5"
 
 servers:
-  - url: https://api.zaplaceno.cz/
+  - url: https://api.finbricks.com/
     description: Production server
-  - url: https://api.sandbox.zaplaceno.cz/
+  - url: https://api.sandbox.finbricks.com/
     description: Sandbox server (uses live data)
 
 tags:
@@ -28,7 +28,7 @@ paths:
         If valid authentication exists, the payment gateway returns `auth_approved`.
         If valid authentication does not exist, the payment gateway returns `need_auth` and a `redirectUrl` to which the user must be redirected in order to authenticate in the bank.
 
-        There is a possibility to call auth services without `clientId`, in which case a time-limited `operationId` is generated (see chapter [Identifiers](#section/Introduction/Identifiers)).
+        There is a possibility to call auth services without `clientId`, in which case a time-limited `operationId` is generated (see chapter [Identifiers](#section/Overview/Identifiers)).
 
         This `operationId` can be then used in all Account Information Services in `operationId` parameter as a substitution for `clientId`. Be aware of time-limits of such `operationId`.
         When calling Account Information Services, only one of the above mentioned identifiers should be used, the `clientId` or the `operationId` parameter.
@@ -229,7 +229,7 @@ components:
             * __auth_approved__ - The client has already been authenticated before and the merchnat can call Account information APIs.
             * __need_auth__ - The client has not been authenticated before OR the authentication has expired. The merchant should redirect the client to the `redirectUrl`.
 
-          enum: [auth_approved, need_auth]
+          enum: [auth_approved, need_auth, auth_not_needed]
         redirectUrl:
           type: string
           description: |-
@@ -241,7 +241,7 @@ components:
         operationId:
           type: string
           format: uuid
-          description: "End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Introduction/Identifiers)."
+          description: "End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Overview/Identifiers)."
 
     AuthenticateRequest:
       type: object
@@ -296,6 +296,13 @@ components:
             Date and time of user authentication expiration.
 
             Please note that the value is only indicative, because the client can, for example, invalidate all existing access rights from the environment of his internet banking. On the other hand, the existence of a token at the time of the service call is verified at the bank.
+        stronglyAuthenticatedTo:
+          type: string
+          format: date-time
+          description: |-
+            Date and time of strong user authentication expiration. In case this attribute is not present, the authentication is not strong anymore.
+
+            Strong authentication is required, for example, when calling transaction history over X days, which may vary by bank.
 
     Error:
       type: object

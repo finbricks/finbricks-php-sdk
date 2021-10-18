@@ -10,7 +10,7 @@
  */
 
 /**
- * Finbricks.com API - System status services
+ * Finbricks.com / Zaplaceno.cz API - System status services
  *
  * Get information regarding outages of banking APIs and instant payments processing on one place.
  *
@@ -440,11 +440,19 @@ class Configuration
         return [
             [
                 "url" => "https://api.zaplaceno.cz",
-                "description" => "Production server",
+                "description" => "Production server for Zaplaceno.cz merchants",
+            ],
+            [
+                "url" => "https://api.finbricks.com",
+                "description" => "Production server for Finbricks merchants",
             ],
             [
                 "url" => "https://api.sandbox.zaplaceno.cz",
-                "description" => "Sandbox server (uses live data)",
+                "description" => "Sandbox server for Zaplaceno.cz merchants (uses live data)",
+            ],
+            [
+                "url" => "https://api.sandbox.finbricks.com",
+                "description" => "Sandbox server for Finbricks merchants (uses live data)",
             ]
         ];
     }

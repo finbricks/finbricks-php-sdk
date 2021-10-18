@@ -9,6 +9,7 @@ mapping.set("openapi/platform/pgw-platform-api.yml", "https://docs.finbricks.com
 mapping.set("openapi/recurring_payment/recurring-payment-api.yml", "https://docs.finbricks.com/api/recurring_payment-api.yml")
 mapping.set("openapi/status/status-api.yml", "https://docs.finbricks.com/api/status-api.yml")
 mapping.set("openapi/bankid/bankid-api.yml", "https://docs.finbricks.com/api/bankid-api.yml")
+mapping.set("openapi/split/split-api.yml", "https://docs.finbricks.com/api/split_payment-api.yml")
 
 
 async function downloadYml(url: string, path: string) {

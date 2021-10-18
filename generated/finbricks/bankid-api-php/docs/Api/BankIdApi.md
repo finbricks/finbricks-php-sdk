@@ -7,7 +7,7 @@ Method | HTTP request | Description
 [**bankIdAuthenticate()**](BankIdApi.md#bankIdAuthenticate) | **POST** /bankId/authenticate | Get redirect url for end-user to BankId authentication
 [**bankIdBanks()**](BankIdApi.md#bankIdBanks) | **GET** /bankId/banks | List of banks supported by BankId.
 [**bankIdConnect()**](BankIdApi.md#bankIdConnect) | **GET** /bankId/connect | Returns basic Claims about the authenticated End-User
-[**bankIdDelete()**](BankIdApi.md#bankIdDelete) | **DELETE** /bankId/revoke | Delete all existing user authentications
+[**bankIdLogout()**](BankIdApi.md#bankIdLogout) | **DELETE** /bankId/logout | Logout end-user from BankId
 [**bankIdProfileGet()**](BankIdApi.md#bankIdProfileGet) | **GET** /bankId/profile | Returns an extended (down to AML) set of authenticated End-User information.
 
 
@@ -187,15 +187,15 @@ No authorization required
 [[Back to Model list]](../../README.md#models)
 [[Back to README]](../../README.md)
 
-## `bankIdDelete()`
+## `bankIdLogout()`
 
 ```php
-bankIdDelete($merchantId, $signature, $clientIdForBankId, $provider)
+bankIdLogout($merchantId, $signature, $clientIdForBankId, $provider)
 ```
 
-Delete all existing user authentications
+Logout end-user from BankId
 
-TODO - This endpoint is inteded for end user revocation.
+The endpoint is used to log out the end-user form BankId.
 
 ### Example
 
@@ -216,9 +216,9 @@ $clientIdForBankId = 0000001; // string | Id identifying the end user at the mer
 $provider = CSAS; // string | Provider code. Identifier of the bank where the end user authenticates. Example values CSOB, CSAS.
 
 try {
-    $apiInstance->bankIdDelete($merchantId, $signature, $clientIdForBankId, $provider);
+    $apiInstance->bankIdLogout($merchantId, $signature, $clientIdForBankId, $provider);
 } catch (Exception $e) {
-    echo 'Exception when calling BankIdApi->bankIdDelete: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling BankIdApi->bankIdLogout: ', $e->getMessage(), PHP_EOL;
 }
 ```
 

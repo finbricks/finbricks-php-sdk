@@ -9,5 +9,6 @@ Name | Type | Description | Notes
 **scope** | **string** | Scope. If the value is not filled in, the payment gateway will use the default value &#x60;AISP_PISP&#x60;. | [optional]
 **validFrom** | [**\DateTime**](\DateTime.md) | Date and time when token has been created. | [optional]
 **validTo** | [**\DateTime**](\DateTime.md) | Date and time of user authentication expiration.  Please note that the value is only indicative, because the client can, for example, invalidate all existing access rights from the environment of his internet banking. On the other hand, the existence of a token at the time of the service call is verified at the bank. | [optional]
+**stronglyAuthenticatedTo** | [**\DateTime**](\DateTime.md) | Date and time of strong user authentication expiration. In case this attribute is not present, the authentication is not strong anymore.  Strong authentication is required, for example, when calling transaction history over X days, which may vary by bank. | [optional]
 
 [[Back to Model list]](../../README.md#models) [[Back to API list]](../../README.md#endpoints) [[Back to README]](../../README.md)

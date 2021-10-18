@@ -640,7 +640,7 @@ class RecurringPaymentInit implements ModelInterface, ArrayAccess, \JsonSerializ
     /**
      * Sets clientId
      *
-     * @param string|null $clientId End-user identifier assigned by the customer. Use [/auth/authenticate](#operation/authAuthenticatePost) to let the user authenticate in the bank.  `clientId` or `operationId` is required. For more information, see chapter [Identifiers](#section/Introduction/Identifiers).
+     * @param string|null $clientId End-user identifier assigned by the customer. Use [/auth/authenticate](#operation/authAuthenticatePost) to let the user authenticate in the bank.  `clientId` or `operationId` is required. For more information, see chapter [Identifiers](#section/Overview/Identifiers).
      *
      * @return self
      */
@@ -668,7 +668,7 @@ class RecurringPaymentInit implements ModelInterface, ArrayAccess, \JsonSerializ
     /**
      * Sets operationId
      *
-     * @param string|null $operationId End-user identifier assigned by Finbricks.com. Use [/auth/authenticate](#operation/authAuthenticatePost) to let the user authenticate in the bank.  `clientId` or `operationId` is required. For more information, see chapter [Identifiers](#section/Introduction/Identifiers).\"
+     * @param string|null $operationId End-user identifier assigned by Finbricks.com. Use [/auth/authenticate](#operation/authAuthenticatePost) to let the user authenticate in the bank.  `clientId` or `operationId` is required. For more information, see chapter [Identifiers](#section/Overview/Identifiers).\"
      *
      * @return self
      */

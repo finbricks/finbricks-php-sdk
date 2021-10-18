@@ -3,12 +3,12 @@ openapi: 3.0.3
 info:
   title: "Finbricks.com API - Account information"
   description: "Finbricks.com API - Account information"
-  version: "1.0.12"
+  version: "1.1.0"
 
 servers:
-  - url: https://api.zaplaceno.cz/
+  - url: https://api.finbricks.com/
     description: Production server
-  - url: https://api.sandbox.zaplaceno.cz/
+  - url: https://api.sandbox.finbricks.com/
     description: Sandbox server (uses live data)
 
 tags:
@@ -113,6 +113,7 @@ paths:
         - $ref: '#/components/parameters/currencyParam'
         - $ref: '#/components/parameters/sizeParam'
         - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/cursor'
 
         - $ref: '#/components/parameters/signatureParam'
       responses:
@@ -162,7 +163,7 @@ components:
       schema:
         type: string
         format: uuid
-      description: "End-user identifier assigned by Finbricks.com. `clientId` or `operationId` is required. For more information, see chapter [Identifiers](#section/Introduction/Identifiers)."
+      description: "End-user identifier assigned by Finbricks.com. `clientId` or `operationId` is required. For more information, see chapter [Identifiers](#section/Overview/Identifiers)."
 
     paymentProviderParam:
       in: query
@@ -171,12 +172,7 @@ components:
       schema:
         type: string
       example:  "KB"
-      description: |-
-        In case you would like to choose the payer bank on your side (e-shop), fill in the value.
-
-        In case you would like to let the end-user select the bank on Zaplaceno.cz front-end, leave it empty.
-
-        Enumeration of possible values can be obtained from __/paymentProviders__ endpoint.
+      description: "Supported payment provider codes can be obtained from [/status/paymentProviders](#tag/status) endpoint."
 
     bankAccountIdParam:
       in: query
@@ -233,6 +229,19 @@ components:
         type: number
       example: 0
       description: "Paging. Required page. Default: 0"
+
+    cursor:
+      in: query
+      name: cursor
+      required: false
+      schema:
+        type: string
+      example: 3e7e6eb50120afca6a619fdddebef108ad99c271
+      description: |-
+        A pagination cursor returned by a previous call to this endpoint. A cursor is a part of links.value response field.
+        Provide this value to retrieve the next set of results for your original query.
+
+        __If the cursor is used in conjunction with other filters, it takes precedence and other filters are ignored.__
 
   schemas:
     AccountList:
@@ -549,6 +558,11 @@ components:
           type: number
           example: 1
           description: "The number of the next page. If the current page is at the same time the last page of the list, then this parameter is not listed or is given with a null value."
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+
         transactions:
           type: array
           items:
@@ -570,6 +584,23 @@ components:
               type: string
               example: "CBA"
               description: "Identification of the code list issuer for banking transactions which acquires the value of the CBA."
+
+    Link:
+      type: object
+      description: |-
+        May contain navigation links for retrieving next set of results (nextPage).
+        Provided link will contain cursor query parameter to retrieve next page of results, if any remain.
+      properties:
+        rel:
+          type: string
+          enum:
+            - nextPage
+          example: "nextPage"
+          description: "Entity of the operation."
+        value:
+          type: string
+          example: "3e7e6eb50120afca6a619fdddebef108ad99c271"
+          description: "Cursor to perform the operation."
 
     OrganisationIdentification:
       type: object

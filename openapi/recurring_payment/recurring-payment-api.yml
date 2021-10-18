@@ -6,9 +6,9 @@ info:
   version: "1.4.1"
 
 servers:
-  - url: https://api.zaplaceno.cz/
+  - url: https://api.finbricks.com/
     description: Production server
-  - url: https://api.sandbox.zaplaceno.cz/
+  - url: https://api.sandbox.finbricks.com/
     description: Sandbox server (uses live data)
 
 tags:
@@ -217,7 +217,7 @@ components:
       schema:
         type: string
         format: uuid
-      description: "End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Introduction/Identifiers)."
+      description: "End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Overview/Identifiers)."
 
     signature:
       in: header
@@ -451,7 +451,7 @@ components:
           description: |-
             End-user identifier assigned by the customer. Use [/auth/authenticate](#operation/authAuthenticatePost) to let the user authenticate in the bank.
 
-            `clientId` or `operationId` is required. For more information, see chapter [Identifiers](#section/Introduction/Identifiers).
+            `clientId` or `operationId` is required. For more information, see chapter [Identifiers](#section/Overview/Identifiers).
 
           example: "someClientId"
         operationId:
@@ -460,7 +460,7 @@ components:
           description: |-
             End-user identifier assigned by Finbricks.com. Use [/auth/authenticate](#operation/authAuthenticatePost) to let the user authenticate in the bank.
 
-            `clientId` or `operationId` is required. For more information, see chapter [Identifiers](#section/Introduction/Identifiers)."
+            `clientId` or `operationId` is required. For more information, see chapter [Identifiers](#section/Overview/Identifiers)."
 
           example: "c13dcb37-986d-41d9-889d-465284a4fde7"
         requestedExecutionDate:

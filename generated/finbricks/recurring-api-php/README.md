@@ -59,7 +59,7 @@ $paymentProvider = KB; // string | Provider code. Example values KB, AIRBANK, MO
 $transactionIdentification = 3G3148492; // string | Identifier of recurring payment instruction.
 $signature = d7fILo5uES9aX/uHgz/N4qZq2MN5lKnxv6HzQx7gVaXcMSRwzcc+k8FXWcyA3FzC5Ps0kxmiwSkR8Rco6vFsyfo3nubtuqPByfhV9kZ5gG4o3JUZAchZL99M6zX4uVBVMs+DWuUX80jlHVOk6DLsOYMoMVEoTAoPUQL22GsPelMFG9ZyujbNAY23jKJxi/Y89s2/n5+OsIG0+LlDD1fpxbROzPQcXj2dZXGI7CqTEAEQvnS0wCJvpJPdxcyKxF+F7wpmlzJLD3kMA8w6ffw4O8DX00KJOJv2ROLd3u1whtLqO7unbHYkNVk05q6gT4nl1TMkKtZP0I/dCuGrWzf0QlBTLExK2JTYpj3mvKuWBJWcJDb61sAn3r+SE7zltmY9cqgnX9UId8Ax97ToqwGl6GUFv47LN+gOp88V7H4HIGu8C1+VF0OxRgIerSrKKHg0GgoxBWkT8XJr3ULdegE4AtQqQIpZZZPE3ios5+3LU/HjlNQnpoMwgcPPZE4UX5vN2uRIYkugcTn7CF13OTX9Qdqfy21gvO9Jbu+pydlyvod6HyvDiEv4W1v8Nex1yrS7rVW8vkufb8K/aTt9LxZxb+4ZM4c6Zd0n+FwkZSma25mNTNOAwJ321ev82PTLuw8mGqM8oPZKSR+sU0WVrzOQvpdBKwjgryKLoS8AoiPSoxY=; // string | Signature of the request. For more information, see chapter [Signing the request](#section/Security/Signing-the-request).
 $clientId = 'clientId_example'; // string | Identification of the client (end-user).
-$operationId = 'operationId_example'; // string | End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Introduction/Identifiers).
+$operationId = 'operationId_example'; // string | End-user identifier assigned by Finbricks.com. For more information, see chapter [Identifiers](#section/Overview/Identifiers).
 
 try {
     $result = $apiInstance->recurringPaymentDetail($merchantId, $paymentProvider, $transactionIdentification, $signature, $clientId, $operationId);
@@ -72,7 +72,7 @@ try {
 
 ## API Endpoints
 
-All URIs are relative to *https://api.zaplaceno.cz*
+All URIs are relative to *https://api.finbricks.com*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------

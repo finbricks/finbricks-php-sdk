@@ -1,5 +1,4 @@
 .gitignore
-.openapi-generator-ignore
 .php_cs
 .travis.yml
 README.md
@@ -21,8 +20,3 @@ src/Model/Error.php
 src/Model/ModelInterface.php
 src/Model/RefreshTokenDto.php
 src/ObjectSerializer.php
-test/Api/AuthApiTest.php
-test/Model/AuthenticateRequestTest.php
-test/Model/AuthenticateResponseTest.php
-test/Model/ErrorTest.php
-test/Model/RefreshTokenDtoTest.php
